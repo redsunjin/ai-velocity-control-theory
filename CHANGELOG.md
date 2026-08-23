@@ -2,6 +2,29 @@
 
 이 문서는 AI Velocity–Control Theory의 개념 변경을 추적한다. 문구 수정이 아니라 **이론의 의미가 바뀌는 변경**을 중심으로 기록한다.
 
+## v0.1-freeze — 2026-08-23
+
+### Claim boundary frozen
+
+v0.1의 공개 주장 범위를 첫 구조 검증과 선행연구 검토를 반영해 고정했다.
+
+- time-based competition의 원전(Stalk, 1988)을 확인하고 “속도가 경쟁우위다” 자체를 신규성에서 제외.
+- Little's Law 및 M/M/1 utilization을 기준으로 `K`의 queueing 성질을 AVCT 신규 수학에서 제외.
+- Bainbridge, Parasuraman & Manzey, Langer et al., Lazaros et al. 등 human oversight / automation human-factors 문헌을 추가.
+- Nguyen et al.의 agentic controllability survey와 Zhu et al.의 meaningful human oversight 연구를 반영해 control architecture를 인간 headcount가 아닌 설계 가능한 복합 capacity로 확장.
+- Kadowaki의 2026 working paper를 direct-overlap source로 기록하고 finite oversight capacity의 최초성 주장을 명시적으로 포기.
+- SILO-BENCH를 multi-agent coordination scaling의 핵심 관련 연구로 기록.
+- peer-reviewed NBKL 연구를 확인하고 OODA/NBKL을 AVCT의 core foundation에서 **supporting analogue**로 내림.
+- working paper를 `Conceptual Baseline + First Structural Validation` 상태로 갱신.
+
+### v0.1 primary question
+
+> Agentic execution capacity가 증가할 때 potential throughput과 realized performance는 언제 분리되며, control architecture는 그 분리점을 얼마나 이동시키는가?
+
+이 질문을 P6/P7의 2차 검증과 향후 실증 연구의 중심으로 둔다.
+
+---
+
 ## v0.1-validation-1 — 2026-08-23
 
 ### Added
@@ -21,10 +44,6 @@
 ### Theory boundary tightened
 
 - H5/P5의 queue saturation 현상 자체는 AVCT의 독창성 대상이 아니라 기존 queueing theory와의 연결성 검산으로 더 명확히 분리한다.
-- AVCT의 우선 연구 질문을 다음으로 좁힌다.
-
-> Agentic execution capacity가 증가할 때 potential throughput과 realized performance가 언제 분리되며, control architecture는 그 분리점을 얼마나 이동시키는가?
-
 - P6/H6을 v0.1 이후 핵심 검증축으로 유지한다.
 - coordination penalty나 delay-decay의 구체 함수형은 첫 결과만으로 고정하지 않는다.
 
@@ -46,8 +65,6 @@
 - 공개용 working paper v0.1 기준 초안 작성.
 
 ### Changed from earlier concept
-
-이 저장소 이전의 초기 아이디어에서 다음 주장을 수정 또는 폐기했다.
 
 #### Removed as a baseline law
 
@@ -85,7 +102,6 @@
 
 - 공공서비스 속도 증가가 사회적 이익의 제곱효과를 만든다는 주장
 - 특정 속도 증가가 반드시 특정 배수의 경쟁우위를 만든다는 주장
-- OODA를 AVCT의 필수 중심축으로 둘지 여부
 
 ### Novelty boundary
 
@@ -96,6 +112,9 @@ v0.1부터 다음 자체는 독창성 주장 대상에서 제외한다.
 - multi-agent coordination overhead
 - time-based competition
 - Lanchester nonlinear concentration effect
+- automation bias / complacency
+- HITL / AITL / guardrail mechanism 자체
+- OODA / NBKL dynamics 자체
 
 AVCT의 잠재 기여는 이들을 **agentic execution–control feedback system**으로 연결하고 측정·검증하는 데 둔다.
 
@@ -105,12 +124,16 @@ AVCT의 잠재 기여는 이들을 **agentic execution–control feedback system
 
 v0.2로 올리기 전 필요한 조건:
 
-- [ ] 핵심 문헌 검토 확장
-- [ ] queueing theory 원전/표준 모델 정리
-- [ ] human oversight peer-reviewed literature 확장
+- [x] 핵심 문헌 검토 확장 — v0.1 claim boundary 수준
+- [x] queueing theory 원전/표준 모델 정리 — novelty boundary 수준
+- [x] human oversight peer-reviewed literature 확장 — v0.1 수준
+- [x] time-based competition primary source 확인
+- [x] OODA/NBKL의 역할 결정 — supporting analogue
 - [x] simulation v0.1 실행
 - [x] `S(A, task)` 가정 1차 민감도 확인
 - [x] `K`와 realized performance의 1차 관계 검토
 - [ ] dependency-graph 기반 coordination model로 재검증
 - [ ] risk-tiered routing (`q_control < 1`) 시뮬레이션
+- [ ] reversibility / reviewer-quality feedback 검증
+- [ ] management control theory 연결
 - [ ] RoundZero의 이론 반례/서사적 모순 수집
