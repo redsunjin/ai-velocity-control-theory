@@ -2,6 +2,34 @@
 
 이 문서는 AI Velocity–Control Theory의 개념 변경을 추적한다. 문구 수정이 아니라 **이론의 의미가 바뀌는 변경**을 중심으로 기록한다.
 
+## v0.1-validation-1 — 2026-08-23
+
+### Added
+
+- H1/H2/H5/H6를 대상으로 한 첫 최소 시뮬레이션 실행.
+- 재현 코드 `validation/simulations/avct_v01.py` 추가.
+- coordination/control summary 데이터와 `first-simulation-v0.1.md` 결과 해석 추가.
+
+### First structural findings
+
+- 낮은 task coupling에서는 agent scale-out 효율 저하가 완만했지만 높은 coupling proxy에서는 `N_eff/A`와 `S`가 강하게 하락했다.
+- `K = Λ_control / μ_control`이 1에 접근할수록 queue delay가 민감해지고 1을 초과하면 finite-horizon backlog가 급격히 증가했다.
+- time-insensitive workflow에서는 potential throughput 증가가 control capacity 부근에서 realized throughput의 **포화**로 전환됐다.
+- delay-sensitive workflow에서는 동일한 control saturation이 realized value의 **하락**으로 전환될 수 있었다.
+- control capacity `μ_control`을 높이면 성과 포화/역전 지점이 뒤로 이동했다.
+
+### Theory boundary tightened
+
+- H5/P5의 queue saturation 현상 자체는 AVCT의 독창성 대상이 아니라 기존 queueing theory와의 연결성 검산으로 더 명확히 분리한다.
+- AVCT의 우선 연구 질문을 다음으로 좁힌다.
+
+> Agentic execution capacity가 증가할 때 potential throughput과 realized performance가 언제 분리되며, control architecture는 그 분리점을 얼마나 이동시키는가?
+
+- P6/H6을 v0.1 이후 핵심 검증축으로 유지한다.
+- coordination penalty나 delay-decay의 구체 함수형은 첫 결과만으로 고정하지 않는다.
+
+---
+
 ## v0.1-baseline — 2026-08-23
 
 ### Added
@@ -80,7 +108,9 @@ v0.2로 올리기 전 필요한 조건:
 - [ ] 핵심 문헌 검토 확장
 - [ ] queueing theory 원전/표준 모델 정리
 - [ ] human oversight peer-reviewed literature 확장
-- [ ] simulation v0.1 실행
-- [ ] `S(A, task)` 가정 민감도 확인
-- [ ] `K`와 realized performance의 관계 검토
+- [x] simulation v0.1 실행
+- [x] `S(A, task)` 가정 1차 민감도 확인
+- [x] `K`와 realized performance의 1차 관계 검토
+- [ ] dependency-graph 기반 coordination model로 재검증
+- [ ] risk-tiered routing (`q_control < 1`) 시뮬레이션
 - [ ] RoundZero의 이론 반례/서사적 모순 수집
