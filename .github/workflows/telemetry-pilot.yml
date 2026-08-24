@@ -30,11 +30,13 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Compile telemetry tools
+      - name: Compile telemetry and pilot tools
         run: |
           python -m py_compile \
             validation/telemetry/validate_telemetry.py \
-            validation/telemetry/derive_metrics.py
+            validation/telemetry/derive_metrics.py \
+            validation/pilot/materialize_task.py \
+            validation/pilot/validate_task_result.py
 
       - name: Validate four-task linkage fixture
         run: |
@@ -110,3 +112,41 @@ jobs:
             exit 1
           fi
           echo 'Sensitive payload key correctly rejected.'
+
+      - name: Self-test five bounded pilot tasks
+        shell: bash
+        run: |
+          set -euo pipefail
+          for task in pilot-t01 pilot-t02 pilot-t03 pilot-t04 pilot-t05; do
+            workspace="/tmp/$task"
+            rm -rf "$workspace"
+            mkdir -p "$workspace"
+            python validation/pilot/materialize_task.py "$task" "$workspace"
+
+            if find "$workspace" -type f -iname '*ground*truth*' | grep -q .; then
+              echo "Evaluator ground truth leaked into $task agent workspace."
+              exit 1
+            fi
+
+            if python validation/pilot/validate_task_result.py "$task" "$workspace"; then
+              echo "$task baseline unexpectedly passes; task is not a useful bounded fixture."
+              exit 1
+            fi
+
+            TASK_ID="$task" WORKSPACE="$workspace" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          task_id = os.environ['TASK_ID']
+          workspace = Path(os.environ['WORKSPACE'])
+          truth = json.loads(Path('validation/pilot/evaluator/ground-truth-v0.1.json').read_text())
+          canonical = truth['tasks'][task_id]['canonical_files']
+          for relative, content in canonical.items():
+              destination = workspace / relative
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              destination.write_text(content, encoding='utf-8')
+          PY
+
+            python validation/pilot/validate_task_result.py "$task" "$workspace"
+          done
