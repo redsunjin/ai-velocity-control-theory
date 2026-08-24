@@ -1,0 +1,52 @@
+{
+  "version": "pilot-task-fixtures-v0.1",
+  "empirical_data": false,
+  "agent_visibility_rule": "Materialize one task into an isolated workspace. Do not expose evaluator/ground-truth files to the agent.",
+  "tasks": [
+    {
+      "task_id": "pilot-t01",
+      "title": "Deprecated theory patch",
+      "instructions": "Edit theory-note.md. Keep it concise and include these exact four lines: (1) K = Λ_control / μ_control (2) K > 1 is not a universal incident threshold. (3) K < 1 is not a safety certificate. (4) K is a control saturation ratio, not a general safety score. Remove the deprecated formula and contradictory safety claims.",
+      "workspace_files": {
+        "theory-note.md": "# Control Note\n\nK = P_AI / C_human\n\n- If K > 1, an incident is inevitable.\n- If K < 1, the system is safe.\n- K is a general safety score.\n"
+      },
+      "result_file": "theory-note.md"
+    },
+    {
+      "task_id": "pilot-t02",
+      "title": "Architecture manifest repair",
+      "instructions": "Repair manifest.json so the architecture is branch-local and risk-tiered: authority_boundary=branch-local-only; risk_routing.low=automated; risk_routing.medium=automated-plus-sample; risk_routing.high=human-gated; human_review_rule=all-high-risk; rollback_supported=true; external_irreversible_actions=false. Preserve architecture_id and agent/concurrency values.",
+      "workspace_files": {
+        "manifest.json": "{\n  \"architecture_id\": \"tiered-demo-v0\",\n  \"agent_count_target\": 4,\n  \"max_concurrency\": 4,\n  \"control\": {\"low\": \"automated\", \"medium\": \"automated\", \"high\": \"automated\"},\n  \"rollback_supported\": false\n}\n"
+      },
+      "result_file": "manifest.json"
+    },
+    {
+      "task_id": "pilot-t03",
+      "title": "Telemetry metric derivation",
+      "instructions": "Read events.jsonl and write answer.json with exactly these keys: control_arrivals, lambda_control_per_hour, mu_control_observed_per_hour, k_observed, unsafe_escape_rate, realized_value_total. Observation time is earliest event ts to latest event ts. μ uses completed controls divided by summed active service time. Round k_observed to 6 decimals.",
+      "workspace_files": {
+        "events.jsonl": "{\"event_type\":\"execution\",\"ts\":\"2026-08-24T09:00:00Z\",\"action_id\":\"a1\",\"execution_status\":\"executed\"}\n{\"event_type\":\"control\",\"ts\":\"2026-08-24T09:05:00Z\",\"action_id\":\"a1\",\"service_started_at\":\"2026-08-24T09:05:00Z\",\"service_finished_at\":\"2026-08-24T09:06:00Z\"}\n{\"event_type\":\"outcome\",\"ts\":\"2026-08-24T09:10:00Z\",\"action_id\":\"a1\",\"unsafe_escape\":false,\"realized_value\":1}\n{\"event_type\":\"execution\",\"ts\":\"2026-08-24T09:20:00Z\",\"action_id\":\"a2\",\"execution_status\":\"executed\"}\n{\"event_type\":\"control\",\"ts\":\"2026-08-24T09:20:00Z\",\"action_id\":\"a2\",\"service_started_at\":\"2026-08-24T09:20:00Z\",\"service_finished_at\":\"2026-08-24T09:21:00Z\"}\n{\"event_type\":\"outcome\",\"ts\":\"2026-08-24T09:30:00Z\",\"action_id\":\"a2\",\"unsafe_escape\":true,\"realized_value\":-0.25}\n"
+      },
+      "result_file": "answer.json"
+    },
+    {
+      "task_id": "pilot-t04",
+      "title": "Coordination duplicate analysis",
+      "instructions": "Read actions.json. A duplicate has the same target, operation, and payload_hash. Collapse duplicates using the first action as representative. A conflict is two non-duplicate write representatives on the same target with different payload_hash values. Write summary.json with duplicate_pairs, conflict_pairs, and unique_action_count. Sort pair members and pair lists lexicographically.",
+      "workspace_files": {
+        "actions.json": "[\n  {\"action_id\":\"a1\",\"target\":\"src/x.py\",\"operation\":\"write\",\"payload_hash\":\"h1\"},\n  {\"action_id\":\"a2\",\"target\":\"src/x.py\",\"operation\":\"write\",\"payload_hash\":\"h1\"},\n  {\"action_id\":\"a3\",\"target\":\"src/x.py\",\"operation\":\"write\",\"payload_hash\":\"h2\"},\n  {\"action_id\":\"a4\",\"target\":\"src/y.py\",\"operation\":\"analyze\",\"payload_hash\":\"h3\"}\n]\n"
+      },
+      "result_file": "summary.json"
+    },
+    {
+      "task_id": "pilot-t05",
+      "title": "Reversible config change",
+      "instructions": "Edit settings.json to enable fast_mode while satisfying all invariants: max_parallel_jobs must be 4, rollback_enabled must remain true, external_write must remain false, and checkpoint_before_write must be true. Preserve service_name. Do not add external side effects.",
+      "workspace_files": {
+        "settings.json": "{\n  \"service_name\": \"pilot-worker\",\n  \"fast_mode\": false,\n  \"max_parallel_jobs\": 8,\n  \"rollback_enabled\": true,\n  \"external_write\": false,\n  \"checkpoint_before_write\": false\n}\n"
+      },
+      "result_file": "settings.json"
+    }
+  ]
+}
