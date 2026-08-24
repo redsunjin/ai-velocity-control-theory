@@ -1,6 +1,6 @@
 # Literature Review Map — v0.1
 
-> 검증 갱신: 2026-08-23. 이 문서는 systematic review가 아니라 **AVCT의 claim boundary를 정하기 위한 선행연구 지도**다. peer-reviewed source, working paper, practitioner source를 구분한다.
+> 검증 갱신: 2026-08-24. 이 문서는 systematic review가 아니라 **AVCT의 claim boundary를 정하기 위한 선행연구 지도**다. peer-reviewed source, working paper, practitioner source를 구분한다.
 
 AVCT는 다음 연구 흐름의 교차점에 있다.
 
@@ -11,6 +11,8 @@ AVCT는 다음 연구 흐름의 교차점에 있다.
 5. Queueing / service-capacity theory
 6. Agentic AI controllability / oversight architecture
 7. OODA / NBKL adversarial decision dynamics
+
+보다 상세한 최신 검증 기록은 `research/literature-validation-2026-08-24.md`를 참조한다.
 
 ---
 
@@ -60,7 +62,9 @@ AVCT 차별화 질문:
 - agentic parallel execution이 조직의 실행률을 급격히 높일 때,
 - control capacity가 성과전환을 어디서 제한하는가?
 
-Source: https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage
+Sources:
+- https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage
+- https://www.bcg.com/about/overview/our-history/time-based-competition
 
 ---
 
@@ -94,7 +98,7 @@ AVCT 연결:
 
 제약:
 - algorithmic benchmark 결과를 기업 업무 전체에 일반화하지 않는다.
-- AVCT의 첫 simulation은 이 결과를 재현한 것이 아니라 별도의 toy model sanity check다.
+- AVCT의 simulation은 이 결과를 재현한 것이 아니라 별도의 toy-model sanity check다.
 
 Source: https://aclanthology.org/2026.acl-long.1354/
 
@@ -125,11 +129,10 @@ DOI: `10.1177/0018720810376055`
 핵심:
 - automation complacency는 multitask load에서 attention 경쟁과 함께 나타남.
 - automation bias는 imperfect decision aids에서 omission/commission error를 유발할 수 있음.
-- 단순 training/instruction만으로 제거되지 않는다고 정리.
 
 AVCT 연결:
 - `μ_control`은 단순 reviewer headcount가 아니다.
-- review capacity뿐 아니라 reviewer sensitivity/quality가 pressure에 따라 달라질 수 있으므로 향후 `R_control(K)` 또는 reviewer-error state가 필요할 수 있다.
+- reviewer sensitivity/quality가 pressure에 따라 달라질 수 있으므로 향후 reviewer-error feedback이 필요하다.
 
 Source: https://doi.org/10.1177/0018720810376055
 
@@ -138,11 +141,6 @@ Source: https://doi.org/10.1177/0018720810376055
 **Effective Human Oversight of AI-Based Systems: A Signal Detection Perspective on the Detection of Inaccurate and Unfair Outputs**  
 Minds and Machines 35, article 1.  
 DOI: `10.1007/s11023-024-09701-0`
-
-핵심:
-- effective oversight에는 error detection과 그에 대한 intervention이 중요함.
-- Signal Detection Theory를 통해 overseer sensitivity와 response bias를 구분.
-- task-, system-, person-related factors가 oversight 품질에 영향을 줄 수 있다고 정리.
 
 AVCT 연결:
 - throughput만이 아니라 **review accuracy / error-detection quality**를 실증 변수에 포함해야 한다.
@@ -177,12 +175,10 @@ DOI: `10.1007/s11023-026-09783-y`
 핵심:
 - agentic AI의 speed/scale이 human cognitive capacity를 넘을 때 classical real-time monitoring assumption이 어려워진다고 문제제기.
 - controllability를 constraints/guardrails, adaptive control, agent-in-the-loop, human-in-the-loop 네 paradigms로 정리.
-- automated oversight의 scalability와 human judgment의 legitimacy 사이 tension을 지적.
 
 AVCT 연결:
 - control architecture를 인간 reviewer 수만으로 모델링해서는 안 된다.
 - `μ_control`에는 guardrail, automated oversight, AITL, HITL의 조합이 반영될 수 있다.
-- AVCT는 controllability taxonomy 자체를 재발명하지 않는다.
 
 Source: https://link.springer.com/article/10.1007/s11023-026-09783-y
 
@@ -196,14 +192,32 @@ DOI: `10.1007/s43681-026-01147-7`
 핵심:
 - AI의 operative agency와 인간의 evaluative agency를 구분.
 - solve–verify asymmetry를 활용하여 humans가 AI solution을 재수행하지 않고 효율적으로 검증할 수 있도록 oversight를 설계해야 한다고 제안.
-- structured rationales, confidence signals, policy attribution, circuit breakers 등 구체 mechanism을 제시.
-- solving은 쉽지만 verification이 비싼 workload도 명시적으로 다룸.
+- structured rationales, confidence signals, policy attribution, circuit breakers 등 mechanism 제시.
 
 AVCT 연결:
-- `q_control`과 `μ_control`은 고정된 인간 능력이 아니라 **verification architecture에 의해 설계 가능한 변수**라는 근거가 강해진다.
-- AVCT P7의 novelty는 개별 mechanism이 아니라 그러한 architecture가 execution–realization divergence point를 얼마나 이동시키는지 측정하는 데 둔다.
+- `q_control`과 `μ_control`은 고정된 인간 능력이 아니라 **verification architecture에 의해 설계 가능한 변수**다.
 
 Source: https://link.springer.com/article/10.1007/s43681-026-01147-7
+
+## Kumar & Singh (2026) — peer reviewed research
+
+**Balancing autonomy and oversight in reliable agentic artificial intelligence through adaptive human interaction architectures**  
+Discover Artificial Intelligence 6, article 709.  
+DOI: `10.1007/s44163-026-01373-2`
+
+핵심:
+- Dynamic Intervention Framework를 5,000 synthetic enterprise automation tasks에서 평가.
+- 논문 보고 기준 human intervention을 14.5% decision steps로 줄이면서 full-human oversight와 통계적으로 동등한 task success rate를 제시.
+- static HITL의 latency와 cognitive burden을 agentic workflow의 bottleneck으로 다룸.
+
+AVCT 제약:
+- adaptive/risk-tiered oversight 자체는 신규 주장 아님.
+- synthetic dataset 결과를 일반 기업에 직접 일반화하지 않는다.
+
+AVCT 연결:
+- architecture별 `K`, residual risk, realized value의 joint frontier를 공통 metric으로 비교하는 연구 방향을 강화한다.
+
+Source: https://link.springer.com/article/10.1007/s44163-026-01373-2
 
 ---
 
@@ -218,18 +232,19 @@ DOI: `10.5281/zenodo.21971214`
 
 확인된 상태:
 - conceptual working paper.
-- experiment/survey/new empirical data를 수행한 논문이 아님을 저자 스스로 명시.
-- 인간 oversight를 finite capacity constraint로 정식화하는 문제를 직접 다룸.
+- finite oversight capacity를 직접 중심 개념으로 다룸.
 
 AVCT 제약:
 - “oversight capacity is finite” 또는 “agent throughput can overwhelm human oversight”를 최초 주장으로 제시하지 않는다.
-- 이 working paper는 AVCT와 직접적인 novelty-overlap source로 계속 추적한다.
 
 AVCT 차별화 후보:
-- execution generation (`A`, `λ`, `S`, `R`)에서 시작해
-- control demand (`Λ_control`)를 생성하고
-- queue/control architecture (`q_control`, `μ_control`)를 거쳐
-- realized performance와 다시 coordination/reliability에 feedback되는 **전체 운영 동역학**과 측정/실증에 초점을 둔다.
+- execution generation (`A`, `λ`, `S`, `R`)
+- control demand (`Λ_control`)
+- queue/control architecture (`q_control`, `μ_control`)
+- residual risk / recovery
+- realized performance feedback
+
+의 **전체 운영 동역학**과 측정/실증에 초점을 둔다.
 
 Source: https://www.vuracapital.com/theory/human-on-the-loop
 
@@ -247,21 +262,17 @@ DOI: `10.1287/opre.9.3.383`
 
 Source: https://doi.org/10.1287/opre.9.3.383
 
-## M/M/1 utilization baseline
-
-표준 M/M/1에서는 utilization factor가 `ρ = λ/μ`이며 steady state를 위해 `ρ < 1`이 요구된다. 평균 system time 역시 `1/(μ-λ)` 형태로 `λ→μ`에서 민감해진다.
+## Queue-utilization baseline
 
 AVCT 제약:
 - `K = Λ_control / μ_control`은 queue utilization과 구조적으로 동일한 ratio다.
 - `K≈1`에서 delay가 민감해지는 현상은 **AVCT의 수학적 신규성 주장이 아니다.**
-- first simulation의 H5는 이 연결을 검산한 것일 뿐이다.
+- simulation H5는 이 연결을 검산한 것일 뿐이다.
 
 AVCT 연구 대상:
 - AI execution architecture가 `Λ_control`을 어떻게 생성하는가?
 - oversight design이 `q_control`, service time, `μ_control`을 어떻게 바꾸는가?
-- queue pressure가 review accuracy, `R`, realized value에 어떤 feedback을 만드는가?
-
-Reference teaching source for M/M/1 baseline: MIT 1.041 queueing models lecture (2026): https://web.mit.edu/1.041/www/lectures/L8-queuing-models-2026sp.pdf
+- queue pressure가 review accuracy, residual risk, realized value에 어떤 feedback을 만드는가?
 
 ---
 
@@ -276,58 +287,31 @@ DOI: `10.1007/s13235-024-00593-4`
 핵심:
 - networked Boyd–Kuramoto–Lanchester (NBKL) resource competition model을 사용.
 - networked agents의 decision-state synchronisation, resource reallocation, adversarial attrition을 결합.
-- business, sporting, military, cyber-security 등 adversarial socio-physical interaction을 적용 영역으로 논의.
 
 AVCT 결정:
 - **OODA/NBKL은 AVCT의 필수 중심축에서 내리고 supporting theoretical analogue로 둔다.**
-- 이유: NBKL은 adversarial resource-competition dynamics를 설명하는 강한 관련 연구지만, 일반 조직의 AI execution throughput–control saturation을 직접 검증한 것은 아니다.
-- AVCT working paper에서는 “관련된 네트워크 경쟁 동역학 연구”로 인용하고, AVCT 수식의 근거처럼 사용하지 않는다.
+- enterprise AI execution throughput과 control-service saturation을 직접 도출하는 근거로 사용하지 않는다.
 
 Source: https://link.springer.com/article/10.1007/s13235-024-00593-4
 
 ---
 
-# 9. Verified novelty boundary — v0.1
+# 9. 현재 문헌 판정
 
-다음은 **AVCT의 독창성 주장 대상에서 제외한다.**
+## 강하게 지지되는 배경
 
-- 속도가 경쟁우위가 될 수 있다는 주장
-- Lanchester의 concentration / nonlinear attrition effect
-- multi-agent coordination overhead
-- 인간 감독의 cognitive/scalability limit
-- automation bias / complacency
-- finite oversight capacity
-- queue utilization / saturation
-- human-in-the-loop, agent-in-the-loop, guardrail 등 control mechanisms 자체
-- OODA/NBKL의 decision-synchronisation/resource-competition 구조
+- 속도는 전략 변수다.
+- 병렬 agent 증가에는 coordination limit이 존재할 수 있다.
+- human oversight에는 scalability/cognitive-load 문제가 있다.
+- control architecture는 human review load를 설계적으로 바꿀 수 있다.
+- queue saturation은 기존 이론으로 설명된다.
 
-## AVCT의 검증 가능한 기여 후보
+## 아직 AVCT가 직접 검증해야 할 것
 
-AVCT의 가장 방어 가능한 중심 연구질문은 다음으로 좁힌다.
+- 실제 agent workflow에서 `N_eff`를 신뢰성 있게 측정할 수 있는가?
+- execution growth가 실제 `Λ_control`을 어떤 함수로 증가시키는가?
+- coordination failure가 추가 control demand를 발생시키는가?
+- control architecture가 `K`를 낮추면서 residual risk를 유지하는 frontier가 실제로 존재하는가?
+- 이 coupled model이 기존 개별 이론을 따로 쓰는 것보다 추가 설명력/설계 가치를 제공하는가?
 
-> **When agentic execution capacity increases, when do potential throughput and realized performance diverge, and how far can control architecture move that divergence point?**
-
-이를 구성하는 연구 대상:
-
-1. `A`, `λ`, task coupling이 `N_eff`를 어떻게 형성하는가
-2. execution stream이 `Λ_control`을 어떻게 생성하는가
-3. risk routing / automated oversight / HITL이 `q_control`, `μ_control`을 어떻게 바꾸는가
-4. `K`와 queue pressure가 verification quality, delay, rework, opportunity loss에 어떤 영향을 주는가
-5. 그 결과 potential performance와 realized performance가 언제 분리되는가
-6. control architecture 변화가 그 분리점과 지속가능한 최적 실행률을 얼마나 이동시키는가
-
-이 연결 구조와 측정 방법이 실증적으로 유효하지 않다면 AVCT의 독자 이론으로서의 필요성은 약해진다.
-
----
-
-# 10. 다음 문헌 과제
-
-- [x] queueing baseline과 AVCT 신규성 분리
-- [x] human oversight / automation human-factors 핵심 peer-reviewed 문헌 추가
-- [x] time-based competition primary source 확인
-- [x] OODA/NBKL peer-reviewed 상태와 역할 결정
-- [x] direct oversight-capacity overlap source 기록
-- [ ] management control / organizational control theory 연결
-- [ ] human review workload의 empirical throughput/accuracy 연구 추가
-- [ ] risk-tiered escalation / exception management 실증 문헌 추가
-- [ ] multi-agent enterprise workflow의 실제 telemetry 연구 탐색
+이 질문에 실증적으로 답하지 못하면 AVCT는 별도 이론이 아니라 유용한 conceptual synthesis로 남아야 한다.
