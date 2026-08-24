@@ -88,6 +88,25 @@ AVCT의 잠재 기여는 이 요소들을 **agentic execution generation → coo
 
 - `research/literature-validation-2026-08-24.md`
 
+## 첫 실증 단계
+
+v0.1의 최소 simulation hardening은 끝났습니다. 다음 단계는 실제 workflow에서 변수가 측정되는지 확인하는 것입니다.
+
+- telemetry 계약: `validation/telemetry-schema.md`
+- bounded experiment: `validation/empirical-plan-v0.1.md`
+- 작업 추적: Issue #3 — `Empirical v0.1: telemetry and bounded workflow experiment`
+
+첫 실증에서는 24~40개의 안전한 software/analysis task를 기준으로 다음 조건을 우선 비교합니다.
+
+| Condition | Execution | Control |
+|---|---|---|
+| A1 | 1 agent | full gate |
+| A2 | 4 agents | full gate |
+| A3 | 4 agents | risk-tiered |
+| A4 | 4 agents | risk-tiered + stronger reversibility |
+
+목표는 이론을 증명하는 것이 아니라 **P1/P2/P6/P7에 실제 반례·null result·지지 방향이 나오는지 확인하는 것**입니다.
+
 ## 저장소 구조
 
 ```text
@@ -109,6 +128,8 @@ AVCT의 잠재 기여는 이 요소들을 **agentic execution generation → coo
     ├── README.md
     ├── hypotheses.md
     ├── simulation-plan.md
+    ├── telemetry-schema.md
+    ├── empirical-plan-v0.1.md
     ├── simulations/
     │   ├── avct_v01.py
     │   └── avct_v01_control_architecture.py
@@ -154,15 +175,15 @@ AVCT theory v0.x+1
 
 - **Stage:** Conceptual theory + two structural sensitivity validations
 - **Baseline:** v0.1 claim boundary frozen
-- **Empirical validation:** Not yet completed
+- **Empirical validation:** Designed, not yet executed
 - **Public claim level:** Hypothesis / conceptual framework
 - **Simulation phase:** Minimal v0.1 hardening completed
-- **Next validation:** real agent workflow telemetry + bounded empirical experiment
+- **Current work:** Issue #3 — real agent workflow telemetry + bounded empirical experiment
 
 ## 다음 단계
 
-1. 실제 agent workflow용 telemetry schema 확정
-2. 작은 software/analysis workflow에서 architecture A/B 실험 설계
-3. `A`, `λ`, duplicate/conflict, `Λ_control`, service time, unsafe escape, rollback/rework 측정
-4. 실제 로그로 P1/P2/P6/P7을 공격
-5. v0.1 기준을 RoundZero `theory-brief`에 동기화하고 소설을 재검토
+1. 3~5 pilot tasks로 telemetry event 연결 검증
+2. 24~40 task set과 ground-truth rubric 고정
+3. A1~A4 architecture manifest 고정
+4. 실제 로그로 P1/P2/P6/P7 공격
+5. 실증 시작과 병행해 v0.1 기준을 RoundZero `theory-brief`에 동기화하고 소설을 재검토
