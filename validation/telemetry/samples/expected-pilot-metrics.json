@@ -1,0 +1,35 @@
+{
+  "source": "validation/telemetry/samples/pilot-events.jsonl",
+  "empirical_evidence": false,
+  "runs": [
+    {
+      "run_id": "fixture-r01",
+      "architecture_ids": ["pilot-e1c1-fixture"],
+      "experiment_conditions": ["fixture-only"],
+      "task_count": 4,
+      "agent_count_observed": 1,
+      "observation_seconds": 3600.0,
+      "candidate_actions": 4,
+      "executed_actions": 4,
+      "valid_completed_actions": 3,
+      "n_eff_observed": 3,
+      "control_arrivals": 4,
+      "control_completed": 4,
+      "control_active_service_seconds": 480.0,
+      "lambda_control_per_hour": 4.0,
+      "mu_control_observed_per_hour": 30.0,
+      "k_observed": 0.133333,
+      "unsafe_escapes": 1,
+      "unsafe_escape_rate": 0.25,
+      "rollback_required": 1,
+      "rollback_success_rate": 1.0,
+      "rework_required": 1,
+      "recovery_cost_total": 1.0,
+      "realized_value_total": 2.5,
+      "coordination_duplicate_events": 0,
+      "coordination_conflict_events": 0,
+      "coordination_rework_actions": 0,
+      "mean_human_review_duration_ms": 120000.0
+    }
+  ]
+}
