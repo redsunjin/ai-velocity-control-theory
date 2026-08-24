@@ -2,9 +2,9 @@
 
 ## An Execution–Control Feedback Model for Agentic Organizations
 
-**Working Paper v0.1 — Conceptual Baseline + First Structural Validation**
+**Working Paper v0.1 — Conceptual Baseline + Structural Sensitivity Validation**
 
-> This is a conceptual working paper. The proposed relationships are hypotheses and analytical constructs, not empirically validated laws. The first simulation is a structural sanity check, not evidence of real-world causal validity.
+> This is a conceptual working paper. The proposed relationships are hypotheses and analytical constructs, not empirically validated laws. The simulations in this repository are structural sanity/sensitivity tests, not evidence of real-world causal validity or safety thresholds.
 
 ---
 
@@ -16,9 +16,9 @@ This paper proposes **AI Velocity–Control Theory (AVCT)** as a conceptual mode
 
 AVCT's primary research question is:
 
-> **When agentic execution capacity increases, when do potential throughput and realized performance diverge, and how far can control architecture move that divergence point?**
+> **When agentic execution capacity increases, when do potential throughput and realized performance diverge, and how far can control architecture move that divergence point without exceeding the relevant residual-risk budget?**
 
-The first minimal simulation reproduces four structural patterns under explicit toy assumptions: diminishing scale-out efficiency under stronger task coupling, queue sensitivity as control demand approaches service capacity, saturation of realized throughput when control capacity becomes the bottleneck, and possible decline of time-sensitive realized value under prolonged control delay. These results do not validate AVCT empirically; they narrow the theory toward testable organizational measurements.
+Two synthetic simulations provide structural checks rather than empirical validation. The first reproduces diminishing scale-out efficiency under stronger task coupling, queue sensitivity as control demand approaches service capacity, and potential–realized performance divergence under a control bottleneck. The second tests risk-tiered routing, automated verification quality, and reversibility. It shows that control routing can move the saturation point, but also produces a counterexample to any unconditional claim that lower human-review load is automatically safer or better: weak automated verification reduces `K` while increasing unsafe escapes. Reversibility reduces the loss severity of escaped errors without reducing their count. These results narrow AVCT toward an **execution–control frontier** that must jointly consider throughput, control load, residual risk, and realized value.
 
 **Keywords:** agentic AI, multi-agent systems, execution velocity, organizational control, human oversight, AI governance, control saturation, Lanchester-inspired model
 
@@ -36,9 +36,9 @@ into:
 
 > How quickly can the organization create useful actions, and how much of that action stream can it safely coordinate, verify, govern, absorb, and reverse?
 
-Time as a source of competitive advantage is not a new idea. Stalk's time-based competition work established organizational response time as a strategic variable decades before modern AI. Likewise, finite human attention, automation bias, multi-agent coordination loss, and queue saturation are established research problems. AVCT therefore does not claim novelty for any of these elements separately.
+Time as a source of competitive advantage is not a new idea. Stalk's time-based competition work established organizational response time as a strategic variable decades before modern AI. Likewise, finite human attention, automation bias, multi-agent coordination loss, meaningful human oversight, adaptive intervention, and queue saturation are established research problems. AVCT therefore does not claim novelty for any of these elements separately.
 
-Its candidate contribution is to connect them as an **agentic execution–control feedback system** and make that system measurable.
+Its candidate contribution is narrower: to connect them as an **agentic execution–control feedback system**, make the coupling measurable, and test when additional execution capacity ceases to produce additional realized value.
 
 ---
 
@@ -62,7 +62,17 @@ where:
 
 `N_eff` is not raw tool calls. It is an analytical approximation of the number of unique, coordinated, valid actions produced within the window.
 
-The important implication is conditional scale-out. Increasing `A` or `λ` can increase candidate action volume, but coordination failures or reduced reliability may offset that gain. SILO-BENCH provides a recent empirical benchmark showing that larger communicating multi-agent LLM systems can fail to convert communication into effective distributed computation, especially as coordination complexity rises. AVCT treats this as support for keeping `S` task- and architecture-dependent, not as proof of any particular AVCT function.
+The important implication is conditional scale-out. Increasing `A` or `λ` can increase candidate action volume, but coordination failures or reduced reliability may offset that gain. SILO-BENCH provides recent peer-reviewed benchmark evidence that larger communicating multi-agent LLM systems can fail to convert communication into effective distributed computation, especially as coordination complexity rises. AVCT treats this as support for keeping `S` task- and architecture-dependent, not as proof of any particular AVCT function.
+
+A more realistic future model may use:
+
+`S = S(A, task coupling, protocol, latency, shared context)`
+
+and:
+
+`R = R(model-task fit, execution rate, verification, coordination pressure)`.
+
+No specific functional form is fixed in v0.1.
 
 ---
 
@@ -85,6 +95,8 @@ Possible interpretations:
 
 Lanchester's role in AVCT is analytical rather than predictive. It motivates the question of when coordinated multiplicity can produce nonlinear effects; it does not determine the answer in advance.
 
+This distinction is necessary because historical validation work on Lanchester models shows that homogeneous square-law assumptions do not universally fit real conflict data. AVCT therefore uses the Lanchester tradition as an inspiration and falsifiable comparison boundary, not as a derivation source.
+
 ---
 
 # 4. Control Demand and Control Capacity
@@ -94,7 +106,7 @@ AI actions differ in risk. Some can be automatically accepted, some need sampled
 Let:
 
 - `Λ_control` = average arrival rate of control-requiring actions,
-- `μ_control` = average control-processing capacity of the organization.
+- `μ_control` = average effective control-processing capacity of the organization.
 
 Define:
 
@@ -107,17 +119,18 @@ This ratio is structurally equivalent to utilization in basic queueing models. A
 Under a simple queue-like interpretation:
 
 - `K < 1`: average service capacity exceeds average control demand,
-- `K → 1`: delay becomes increasingly sensitive in simple stationary models,
+- `K → 1`: delay becomes increasingly sensitive in compatible stationary models,
 - `K > 1`: unresolved control work accumulates unless arrivals, service capacity, rejection, batching, prioritization, or operating rules change.
 
 The AVCT question begins one layer earlier and extends one layer later:
 
 1. how agentic execution generates `Λ_control`,
 2. how control architecture changes `q_control`, service time, and `μ_control`,
-3. how queue pressure changes verification quality, delay, rework, and opportunity value,
-4. how those effects feed back into realized performance.
+3. how queue pressure changes verification quality, delay, rework, opportunity value, and responsibility load,
+4. how residual risk and recovery cost change realized value,
+5. how those effects feed back into coordination and reliability.
 
-`μ_control` should not be interpreted as human headcount alone. Agentic controllability research distinguishes constraints and guardrails, adaptive controls, agent-in-the-loop oversight, and human-in-the-loop oversight. Meaningful oversight research also suggests that verification architecture can change the cost of review by exploiting solve–verify asymmetry. Thus control capacity is partly a design variable.
+`μ_control` should not be interpreted as human headcount alone. Agentic controllability research distinguishes constraints and guardrails, adaptive controls, agent-in-the-loop oversight, and human-in-the-loop oversight. Meaningful oversight research also shows that verification architecture can change the cost of review by exploiting solve–verify asymmetry. Dynamic-intervention research further demonstrates, on synthetic enterprise tasks, that adaptive escalation can reduce human intervention while preserving reported task success under the study's assumptions. These are existing research contributions; AVCT does not claim to invent them.
 
 ---
 
@@ -136,23 +149,26 @@ higher Effective Action Mass
               ↓
 higher potential organizational value
               ↓
-control-requiring action stream
+control-demand generation + risk routing
               ↓
-higher Control Saturation Ratio
+Control Saturation Ratio (K)
               ↓
-delay / backlog / rework / control debt
+delay / backlog / rework / residual risk / control debt
               ↓
 possible degradation in review quality,
-coordination, reliability, or opportunity value
+coordination, reliability, opportunity value,
+or recovery cost
               ↓
-lower or saturated realized performance
+lower, saturated, or reversed realized performance
 ```
 
 The management problem is therefore not `max A` or `max λ`.
 
 It is closer to:
 
-> maximize realized performance subject to coordination, reliability, verification, control-capacity, risk, and reversibility constraints.
+> maximize realized performance subject to coordination, reliability, verification, control-capacity, residual-risk, and reversibility constraints.
+
+This implies an **Execution–Control Frontier**: among architectures with similar execution capacity, the superior architecture is not merely the one with the lowest human-review load, but the one that jointly achieves lower control saturation, acceptable residual risk, and higher realized value.
 
 ---
 
@@ -170,9 +186,9 @@ It is closer to:
 
 **P6 — Potential–realized divergence.** As agentic execution increases, potential throughput and realized performance can diverge when control capacity becomes a bottleneck. Time-insensitive workflows may saturate; workflows with delay, rework, recovery, or opportunity costs may exhibit performance reversal.
 
-**P7 — Control architecture as production infrastructure.** Better control architecture can move the divergence point by reducing unnecessary control demand, improving verification efficiency, increasing effective service capacity, or lowering the cost of error and recovery.
+**P7 — Conditional control-architecture productivity.** Control architecture can move the divergence point by reducing unnecessary control demand, improving verification efficiency, increasing effective service capacity, or lowering recovery loss. However, a lower `K` is not sufficient. The architecture must also keep residual risk and recovery cost within the relevant risk budget. Its performance must therefore be evaluated jointly on control load, unsafe escape, harm, and realized value.
 
-**P8 — Sustainable velocity.** The organization with the highest short-run execution rate need not be the organization with the highest long-run realized value.
+**P8 — Sustainable velocity.** The organization with the highest short-run execution rate need not be the organization with the highest long-run realized value. Long-run advantage may depend on maintaining coordination, reliability, control capacity, residual risk, and recoverability as execution scales.
 
 ---
 
@@ -186,7 +202,7 @@ AVCT is not novel because it observes any of the following:
 - human attention and oversight are limited,
 - automation bias and complacency exist,
 - queues saturate as arrival rates approach service capacity,
-- human-in-the-loop, agent-in-the-loop, guardrails, escalation, or circuit breakers can provide control.
+- human-in-the-loop, agent-in-the-loop, guardrails, escalation, circuit breakers, or risk-tiered oversight can provide control.
 
 Several recent sources make the overlap especially clear.
 
@@ -195,14 +211,15 @@ Several recent sources make the overlap especially clear.
 - **Lazaros et al. (2026)** identify scalability, cognitive load, and trust calibration as deployment challenges in HITL AI.
 - **Kadowaki (2026)** directly proposes a conceptual theory of finite oversight capacity in a non-peer-reviewed working paper. AVCT therefore cannot claim discovery of finite oversight capacity.
 - **Zhu et al. (2026)** frame oversight as an architectural allocation of operative and evaluative agency and emphasize solve–verify asymmetry.
-- **Little (1961)** and standard queueing theory already provide the mathematical foundation for arrival/service capacity relationships.
+- **Kumar & Singh (2026)** evaluate an adaptive intervention architecture on synthetic enterprise tasks and report large reductions in human intervention under their experimental setting. AVCT therefore cannot claim novelty for adaptive/risk-tiered intervention itself.
+- **Little (1961)** and standard queueing theory already provide mathematical foundations for arrival/service-capacity relationships.
 - **Stalk (1988)** establishes time as a strategic source of competitive advantage long before agentic AI.
 
 AVCT's candidate contribution is narrower:
 
-> a measurable model linking **agentic execution generation → coordination/reliability → control demand → control service architecture → realized performance**, including the conditions under which potential and realized performance diverge.
+> a measurable model linking **agentic execution generation → coordination/reliability → control demand → control service architecture → residual risk / recovery → realized performance**, including the conditions under which potential and realized performance diverge.
 
-If this connected model adds no predictive or design value beyond applying existing queueing, human-factors, and multi-agent models independently, AVCT should not be treated as a separate theory.
+If this connected model adds no predictive, explanatory, measurement, or design value beyond applying existing queueing, human-factors, multi-agent, and oversight models independently, AVCT should not be treated as a separate theory.
 
 ---
 
@@ -216,11 +233,9 @@ However, AVCT does **not** use NBKL or OODA as a direct proof of enterprise AI e
 
 ---
 
-# 9. First Structural Validation
+# 9. First Structural Validation — Coordination and Saturation
 
 The first minimal simulation is documented in `validation/results/first-simulation-v0.1.md` and reproduced by `validation/simulations/avct_v01.py`.
-
-It is deliberately simple.
 
 ## Coordination sanity check
 
@@ -247,53 +262,131 @@ At `μ_control=12`, increasing from `A=8` to `A=16` nearly doubled unique candid
 
 When a toy delay-value decay `exp(-0.03d)` was added, realized value fell sharply after persistent queue overload. The direction supports P6 as a conditionally plausible mechanism; the magnitude is entirely dependent on the assumed decay function and is not a real-world estimate.
 
-## First theory decision
-
-The simulation shifts emphasis away from “control saturation exists” toward:
+The first theory decision was therefore to shift emphasis away from “control saturation exists” toward:
 
 > **what determines the divergence point between potential and realized performance, and which control architectures move it?**
 
-That becomes the priority of the next simulation and empirical program.
+---
+
+# 10. Second Structural Validation — Control Architecture, Residual Risk, and Reversibility
+
+The second synthetic simulation is documented in `validation/results/second-simulation-v0.1.md` and reproduced by `validation/simulations/avct_v01_control_architecture.py`.
+
+It compares:
+
+- full human review,
+- risk-tiered routing with automated verification,
+- verifier sensitivity levels,
+- two reversibility profiles.
+
+## Saturation-point shift
+
+Under the study's synthetic risk mix and `μ_control=12`:
+
+- full review reached `K≈1` around `A=8`,
+- a tiered architecture with 99% synthetic verifier sensitivity remained at `K≈0.59` at `A=32` and crossed `K=1` only between `A=32` and `A=64`.
+
+This shows that control architecture can structurally move the divergence point by reducing human-control demand. It does not establish a general multiplier for real organizations.
+
+## Counterexample to unconditional P7
+
+At a stable full-review baseline `A=4`:
+
+- full review: `K≈0.50`, unsafe escape ≈ `1.03 / 1000 executed actions`,
+- tiered routing with 90% synthetic verifier sensitivity: `K≈0.074`, but unsafe escape ≈ `2.31 / 1000 executed actions`,
+- tiered routing with 99% synthetic verifier sensitivity: `K≈0.074`, unsafe escape ≈ `0.98 / 1000 executed actions`.
+
+Thus lower control load does not automatically mean a better control architecture. In the toy model, routing quality has an explicit safety threshold. The approximate 99% value is not a real-world threshold; it is an assumption-dependent sensitivity boundary.
+
+This result changes P7 from an unconditional productivity claim to a joint constraint:
+
+> **control architecture improves sustainable execution only if control-load reduction is achieved while residual risk remains within the relevant risk budget.**
+
+## Reversibility
+
+Holding routing, `K`, and unsafe-escape count constant while increasing reversibility reduced harm per 1,000 executed actions in the toy model by roughly 38–41% at the tested points.
+
+This suggests that reversibility should be modeled primarily as a **loss-severity and recovery variable**, not hidden inside execution reliability.
 
 ---
 
-# 10. Validation Program
+# 11. v0.1 Claim Boundary — Frozen Checkpoint
 
-## Simulation stage 2
+The following claims are acceptable for v0.1 as theoretical propositions or research questions:
 
-The next simulation should add:
+1. Agentic AI can increase action-generation rate and parallelism.
+2. Effective output is conditional on coordination and reliability.
+3. Control-demand arrival is partly a function of execution architecture, risk, and routing.
+4. Potential throughput and realized performance can diverge under control bottlenecks, delay, rework, residual risk, or recovery cost.
+5. Control architecture can move the divergence point, but only joint control-load and residual-risk performance determines whether the move is sustainable.
+6. Reversibility can reduce error consequence even when error probability is unchanged.
+7. The distinct AVCT research question is the coupled operational dynamics among these layers.
 
-- dependency-graph tasks instead of a target-pool coupling proxy,
-- risk-tiered routing with `q_control < 1`,
-- reversible vs irreversible actions,
-- reviewer error / cognitive-load effects,
-- automated oversight and human oversight as distinct service paths.
+The following claims are explicitly prohibited in v0.1:
 
-The main target is P6/P7: whether control architecture moves the potential–realized divergence point without unacceptable risk leakage.
+- `P = V²` as a universal law,
+- `P = N_eff²` as a universal law,
+- “2× AI speed = 4× competitiveness,”
+- discovery of finite human oversight capacity,
+- discovery of queue saturation,
+- invention of risk-tiered or adaptive oversight,
+- a universal safe threshold for `K`,
+- use of synthetic verifier thresholds as real safety standards,
+- public social benefit proportional to AI speed squared.
 
-## Empirical stage
+---
 
-The minimum telemetry schema for a real agentic workflow should eventually measure:
+# 12. Validation Program
 
+## Immediate next step: telemetry before more elaborate simulation
+
+The minimum telemetry schema for a real agentic workflow should measure:
+
+### Execution
 - agent count and concurrency,
 - candidate actions / time,
-- unique completed actions,
-- duplicate/conflict actions,
-- actions by risk tier,
-- review arrival rate,
-- review service time,
-- automated vs human review path,
-- queue delay,
-- approval/rejection accuracy where ground truth exists,
-- rollback/rework,
-- opportunity-value loss from delay,
-- realized business/operational output.
+- action type and target,
+- unique completed actions.
 
-Without such data, AVCT remains conceptual.
+### Coordination
+- duplicate work,
+- conflicts / merges,
+- blocked dependencies,
+- coordination latency,
+- useful output / agent.
+
+### Control
+- action risk tier,
+- automated / human / bypass route,
+- review arrival rate,
+- service time,
+- escalation and override,
+- queue delay.
+
+### Outcome
+- valid realized output,
+- unsafe escape,
+- rollback / rework,
+- recovery time and cost,
+- delay-adjusted value.
+
+## Next simulation only if needed
+
+The next synthetic attack should focus on:
+
+1. reviewer sensitivity as a function of `K` / cognitive load,
+2. verifier sensitivity + specificity + cost jointly,
+3. dependency-graph coordination failures generating additional control demand.
+
+## Empirical target
+
+The most useful first real experiment is a bounded software/analysis workflow in which the same task set can be executed under multiple agent/control architectures while recording all execution and control events.
+
+Without real telemetry, AVCT remains conceptual.
 
 ---
 
-# 11. Limitations of v0.1
+# 13. Limitations of v0.1
 
 This version does not establish:
 
@@ -302,21 +395,24 @@ This version does not establish:
 - a universal safe threshold for `K`,
 - a causal relationship between high `K` and organizational incidents,
 - a universal speed–reliability trade-off,
+- a universal automated-verifier quality threshold,
 - a square-law relationship between AI velocity and business value,
 - a square-law relationship between service speed and public social benefit,
-- that AVCT is superior to a composition of existing queueing, human-factors, and organizational-control models.
+- that AVCT is superior to a composition of existing queueing, human-factors, multi-agent, and organizational-control models.
 
-The last point is an explicit falsification condition for the theory as a distinct framework.
+The simulations use synthetic risk distributions, error rates, reviewer quality, value decay, routing rules, and loss functions. They are intended to identify testable dependencies and counterexamples, not operational thresholds.
+
+The final point is an explicit falsification condition for the theory as a distinct framework: if the coupled AVCT representation offers no added explanatory, predictive, measurement, or design value, it should remain a convenient synthesis rather than be promoted as a separate theory.
 
 ---
 
-# 12. Research Direction
+# 14. Research Direction
 
 If supported, AVCT may evolve into three practical artifacts:
 
-1. **measurement model** — how to measure effective action mass and control saturation from real agent logs,
+1. **measurement model** — how to measure effective action mass, control saturation, residual risk, and recoverability from real agent logs,
 2. **predictive model** — when additional agents or faster execution cease to improve realized performance,
-3. **design framework** — how routing, authority boundaries, observability, automated oversight, human review, and reversibility increase sustainable execution velocity.
+3. **design framework** — how routing, authority boundaries, observability, automated oversight, human review, and reversibility expand sustainable execution velocity.
 
 The long-term thesis is:
 
@@ -339,4 +435,5 @@ The long-term thesis is:
 - Lazaros, K., Vrahatis, A. G., & Kotsiantis, S. (2026). *Human-in-the-Loop Artificial Intelligence: A Systematic Review of Concepts, Methods, and Applications*. Entropy, 28(4), 377. DOI: `10.3390/e28040377`
 - Nguyen, M. H., Nguyen, D.-H., O’Sullivan, B., & Nguyen, H. D. (2026). *On Controllability in Agentic AI: A Survey*. Minds and Machines, 36, 29. DOI: `10.1007/s11023-026-09783-y`
 - Zhu, L. et al. (2026). *Designing meaningful human oversight in AI*. AI and Ethics, 6, 286. DOI: `10.1007/s43681-026-01147-7`
+- Kumar, M., & Singh, D. (2026). *Balancing autonomy and oversight in reliable agentic artificial intelligence through adaptive human interaction architectures*. Discover Artificial Intelligence, 6, 709. DOI: `10.1007/s44163-026-01373-2`
 - Kadowaki, N. (2026). *Human-on-the-Loop: A Theory of Oversight Capacity, Its Failure Modes, and the Non-Delegable Residual in the Age of AI Agents*. VURA Working Paper Series No. 8. DOI: `10.5281/zenodo.21971214`. **Working paper; not peer reviewed.**
