@@ -12,6 +12,8 @@
 - multi-agent coordination이 scale-out에서 어려워질 수 있다는 주장
 - arrival rate와 service capacity의 불균형이 backlog를 만든다는 queueing 결과
 - Lanchester square law의 비선형 집중 효과
+- risk-tiered / adaptive oversight가 human intervention을 줄일 수 있다는 주장
+- meaningful oversight를 solve–verify architecture로 설계할 수 있다는 주장
 
 AVCT는 이 개념들을 새로 발명했다고 주장하지 않는다.
 
@@ -30,22 +32,24 @@ Potential competitive effect
             ↓
 Control-demand arrival (Λ_control)
             ↓
+Control architecture / routing / service
+            ↓
 Control saturation (K)
             ↓
-Delay / rework / cognitive load / control debt
-            ↓
-Coordination efficiency (S) and reliability (R)
+Residual risk / delay / rework / recovery loss
             ↓
 Realized performance
+            ↓
+Coordination efficiency (S) / reliability (R) feedback
 ```
 
-핵심은 **속도와 통제를 각각 연구하는 것이 아니라, 속도를 생성하는 구조와 그 속도를 흡수하는 구조의 상대적 확장 속도**를 하나의 피드백 체계로 보는 것이다.
+핵심은 **속도와 통제를 각각 연구하는 것이 아니라, 속도를 생성하는 구조와 그 속도를 흡수하는 구조의 상대적 확장 속도와 residual risk를 하나의 피드백 체계로 보는 것**이다.
 
 ---
 
 ## 3. Human-on-the-Loop working paper와의 경계
 
-Kadowaki(2026)의 최신 working paper는 oversight capacity와 agent throughput의 비대칭을 직접 다룬다.
+Kadowaki(2026)의 working paper는 oversight capacity와 agent throughput의 비대칭을 직접 다룬다.
 
 따라서 AVCT가 피해야 할 claim:
 
@@ -57,9 +61,7 @@ AVCT가 검증할 수 있는 별도 질문:
 
 그리고:
 
-> 통제포화가 다시 실행 신뢰도와 조정효율을 떨어뜨리는 feedback loop가 실제 조직에서 존재하는가?
-
-이 두 질문이 중요 차별화 후보다.
+> 통제포화와 residual risk가 다시 실행 신뢰도와 조정효율을 떨어뜨리는 feedback loop가 실제 조직에서 존재하는가?
 
 ---
 
@@ -106,7 +108,42 @@ AVCT는 이를 기업 성과로 곧바로 일반화하지 않는다.
 
 ---
 
-## 7. 가능한 최종 기여 형태
+## 7. Adaptive / risk-tiered oversight와의 경계
+
+Zhu et al.(2026)은 meaningful human oversight를 solve–verify asymmetry와 layered agency로 설계한다. Kumar & Singh(2026)은 synthetic enterprise automation tasks에서 dynamic intervention으로 human intervention을 줄이는 architecture를 평가했다.
+
+따라서 AVCT가 피해야 할 claim:
+
+> 위험기반 라우팅이나 adaptive oversight를 처음 제안했다.
+
+AVCT의 별도 검증 질문:
+
+> 동일 execution capacity에서 각 control architecture가 `K`, unsafe escape, harm/recovery cost, realized value를 어떻게 동시에 바꾸는가?
+
+2차 toy simulation은 이 질문을 **Execution–Control Frontier**로 구체화했다.
+
+중요한 반례:
+
+- 낮은 `K`가 자동으로 좋은 architecture를 의미하지 않았다.
+- verifier quality가 낮으면 human load는 감소해도 unsafe escape가 증가했다.
+
+따라서 AVCT P7의 핵심은 adaptive oversight의 존재가 아니라 **control-load reduction과 residual-risk preservation의 joint condition**이다.
+
+---
+
+## 8. OODA / NBKL과의 경계
+
+peer-reviewed NBKL 연구는 networked agents의 cyclic decision synchronization과 adversarial resource competition을 결합한다.
+
+AVCT 결정:
+
+- OODA/NBKL은 core derivation이 아니다.
+- adversarial multi-agent synchronization의 supporting analogue로만 사용한다.
+- enterprise control-service bottleneck의 직접 증거로 사용하지 않는다.
+
+---
+
+## 9. 가능한 최종 기여 형태
 
 AVCT가 성공적으로 검증될 경우 기여는 다음 중 하나 또는 복수일 수 있다.
 
@@ -114,13 +151,13 @@ AVCT가 성공적으로 검증될 경우 기여는 다음 중 하나 또는 복�
 AI agent organization을 execution-control coupled system으로 설명하는 통합 프레임.
 
 ### Measurement contribution
-`N_eff`, `Λ_control`, `μ_control`, `K`를 실제 운영 로그에서 측정할 수 있는 operational metric set.
+`N_eff`, `Λ_control`, `μ_control`, `K`, residual risk, recovery cost를 실제 운영 로그에서 측정할 수 있는 operational metric set.
 
 ### Empirical contribution
-agent scaling이 realized performance에 미치는 효과가 control saturation에 의해 조건부로 달라짐을 실증.
+agent scaling이 realized performance에 미치는 효과가 control architecture와 residual risk에 의해 조건부로 달라짐을 실증.
 
 ### Design contribution
-실행 속도를 억제하지 않고도 control capacity를 확장하거나 control demand를 줄이는 조직/시스템 설계 원칙.
+실행 속도를 억제하지 않고도 control capacity를 확장하거나 control demand를 줄이면서 risk budget을 지키는 조직/시스템 설계 원칙.
 
 ---
 
@@ -128,4 +165,4 @@ agent scaling이 realized performance에 미치는 효과가 control saturation�
 
 공개 문서와 논문에서는 다음 문장을 기본 원칙으로 사용한다.
 
-> AVCT does not claim novelty for finite human oversight, queue saturation, multi-agent coordination costs, or Lanchester-style nonlinear effects individually. Its proposed contribution is to model and test their coupling in agentic organizations as an execution–control feedback system.
+> AVCT does not claim novelty for finite human oversight, queue saturation, multi-agent coordination costs, adaptive oversight, or Lanchester-style nonlinear effects individually. Its proposed contribution is to model and test their coupling in agentic organizations as an execution–control feedback system, including the joint frontier between control load, residual risk, and realized performance.
