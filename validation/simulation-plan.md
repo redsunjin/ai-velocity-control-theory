@@ -10,11 +10,22 @@
 - `validation/results/generated/control-summary.csv`
 - 재현 코드: `validation/simulations/avct_v01.py`
 
+**Second control-architecture simulation completed (2026-08-24).**
+
+결과:
+- `validation/results/second-simulation-v0.1.md`
+- `validation/results/generated/control-architecture-summary.csv`
+- `validation/results/generated/verifier-sensitivity-summary.csv`
+- `validation/results/generated/reversibility-summary.csv`
+- 재현 코드: `validation/simulations/avct_v01_control_architecture.py`
+
 ---
 
-## 1차 목적
+# 1. 1차 시뮬레이션 — coordination + control saturation sanity check
 
-AVCT의 모든 주장을 한 번에 증명하려 하지 않는다. 첫 시뮬레이션의 목적은 다음 네 현상이 최소 모형에서도 재현 가능한지 확인하는 것이었다.
+## 목적
+
+AVCT의 모든 주장을 한 번에 증명하지 않는다. 첫 시뮬레이션은 다음 네 현상이 최소 모형에서도 재현 가능한지 확인했다.
 
 1. 에이전트 수 증가가 항상 유효 실행량을 비례 증가시키지는 않는다.
 2. 조정 효율 저하는 병렬화 이익을 상쇄할 수 있다.
@@ -23,113 +34,152 @@ AVCT의 모든 주장을 한 번에 증명하려 하지 않는다. 첫 시뮬레
 
 네 항목 모두 구조적 패턴은 재현됐지만 경험적 검증으로 취급하지 않는다.
 
----
-
-## 1차 최소 모델
+## 최소 모델
 
 시간을 discrete step으로 두었다.
 
-각 step에서:
+1. `A`개의 에이전트에 비례해 후보 행동 생성
+2. 후보 행동이 task target 선택
+3. 동일 target 중복을 coordination loss로 처리
+4. reliability `R`로 유효/오류 행동 분리
+5. control-gated experiment에서 unique action을 queue로 전달
+6. control server가 `μ_control`만큼 처리
+7. 승인된 유효 행동을 realized performance에 반영
+8. delay-sensitive condition에서는 review delay에 따라 action value 할인
 
-1. `A`개의 에이전트에 비례해 후보 행동이 생성된다.
-2. 후보 행동이 task target을 선택한다.
-3. 동일 target의 중복 실행을 coordination loss로 처리한다.
-4. reliability `R`에 따라 유효/오류 행동을 나눈다.
-5. control-gated experiment에서는 unique action을 control queue로 보낸다.
-6. control servers가 `μ_control`만큼 처리한다.
-7. 승인된 유효 행동은 realized performance에 반영한다.
-8. delay-sensitive condition에서는 review delay에 따라 action value를 할인한다.
+## 판정
 
-## 1차 변수
-
-### 조작 변수
-- `A`: 1, 2, 4, 8, 16, 32
-- `λ`: 1.5 / agent / step 고정
-- task coupling proxy: low / high
-- `μ_control`: 6 / 12 / 24
-- delay decay: 0 / 0.03
-
-### 중간 변수
-- `S`
-- `Λ_control`
-- `K`
-- queue length
-- mean review delay
-
-### 결과 변수
-- raw actions
-- valid unique actions
-- approved actions
-- realized performance
+- H1/H2: 방향성 유지, 실제 coordination data 필요
+- H5: queueing theory 연결 검산으로 분리
+- H6: AVCT 핵심 연구 대상으로 유지
 
 ---
 
-# 2차 시뮬레이션 계획
-
-첫 결과로 인해 다음 단계의 목적을 좁힌다.
+# 2. 2차 시뮬레이션 — control architecture + residual risk
 
 ## 핵심 질문
 
-> **동일한 agentic execution capacity에서 control architecture가 potential throughput과 realized performance의 분리점을 얼마나 이동시키는가?**
+> **동일한 agentic execution capacity에서 control architecture가 potential throughput과 realized performance의 분리점을 얼마나 이동시키며, 그 이동이 residual risk를 악화시키지 않는 조건은 무엇인가?**
 
-## 추가할 구조
+## 추가한 구조
 
-### A. Dependency graph based coordination
+### A. Risk-tiered control routing
 
-단순 target-pool proxy 대신 task dependency graph를 사용한다.
+- low risk: automated verification
+- medium risk: automated verification + sample + escalation
+- high risk: human gate
 
-비교 후보:
-- independent tasks
-- sparse dependencies
-- dense dependencies
-- shared bottleneck dependency
+전수검토와 비교해 `q_control`과 `K`가 얼마나 달라지는지 측정했다.
 
-측정:
-- duplicate/conflict rate
-- blocked tasks
-- coordination messages
-- useful output / agent
+### B. Verifier sensitivity analysis
 
-### B. Risk-tiered control routing
+Automated verifier sensitivity를 70%~99.5%까지 변화시켰다.
 
-모든 action을 검토하는 `q_control=1` 가정을 폐기하고 action별 risk tier를 둔다.
+핵심 결과:
 
-예:
-- low risk: auto-execute
-- medium risk: sampled / automated review
-- high risk: human-gated review
+- 낮은 verifier sensitivity에서는 `K`는 감소하지만 unsafe escape가 증가
+- 해당 toy assumptions에서 약 99% sensitivity 부근에서 full-review stable baseline과 유사한 unsafe-escape 수준 관찰
 
-측정:
-- `q_control`
-- human review load
-- unsafe escape rate
-- realized performance
+이 값은 현실 임계치가 아니다.
 
 ### C. Reversibility
 
-action을 reversible / irreversible로 분리한다.
+동일 routing, 동일 `K`, 동일 unsafe-escape count에서 reversibility profile만 변경했다.
 
-동일한 오류라도 rollback 가능한 action과 외부 피해가 즉시 발생하는 action의 손실함수를 다르게 둔다.
+결과:
 
-### D. Reliability feedback
+- error count는 변하지 않음
+- harm / 1,000 executed actions는 감소
 
-첫 모델에서는 `R=0.95`를 고정했다.
+따라서 reversibility를 reliability보다 loss/recovery modifier로 보는 방향으로 이론을 수정했다.
 
-2차에서는 다음 후보를 비교한다.
+## 판정
 
-- `R` independent of K
-- reviewer pressure가 높을 때 false approval 증가
-- coordination pressure가 높을 때 agent error/conflict 증가
-
-구체 함수는 이론으로 선언하지 않고 sensitivity analysis로 비교한다.
+- H6/P6: 유지 및 강화
+- H7/P7: **조건부 명제로 수정**
+- H8: 유지, loss-severity modifier로 역할 명확화
 
 ---
 
-## 2차 성공 기준
+# 3. 다음 단계 — simulation expansion보다 telemetry 우선
 
-- H6의 포화/역전이 특정 decay 함수 하나에만 의존하는지 공격
-- H7 risk-tiering이 `q_control`을 낮추면서 손실을 증가시키지 않는 영역 탐색
-- H8 reversibility가 동일 K의 실제 손실을 얼마나 다르게 만드는지 탐색
-- P6/P7을 실제 조직 데이터로 옮길 수 있는 최소 telemetry schema 도출
+현재 v0.1에서는 synthetic simulation을 계속 복잡하게 만드는 것보다 **실제 agent workflow에서 측정 가능한 schema를 고정하는 작업**을 우선한다.
+
+## 핵심 telemetry
+
+### Execution layer
+- agent count
+- concurrency
+- candidate action rate
+- action type / target
+- completion time
+
+### Coordination layer
+- duplicate action
+- conflict / merge
+- blocked dependency
+- coordination messages
+- useful output / agent
+
+### Control layer
+- risk tier
+- automated / human / bypass route
+- review arrival time
+- service start / end
+- approval / rejection
+- escalation
+- override
+
+### Outcome layer
+- realized valid output
+- unsafe escape
+- rollback
+- rework
+- recovery time / cost
+- delay-adjusted value
+
+---
+
+# 4. 다음 시뮬레이션 후보
+
+실제 telemetry 수집 전 필요한 경우에만 다음을 추가한다.
+
+## A. Reviewer-quality feedback
+
+`R_control = R_control(K, cognitive load, burstiness)`
+
+- queue pressure가 높을 때 false approval / false rejection이 변하는지 sensitivity test
+
+## B. Dependency graph → control demand
+
+coordination conflict가 추가 review/escalation을 생성하도록 연결한다.
+
+`coordination loss ↑ → Λ_control ↑`
+
+## C. Verification frontier
+
+automated verifier의:
+
+- sensitivity
+- specificity
+- inference cost
+- latency
+
+를 동시에 변경하여 control architecture의 Pareto frontier를 비교한다.
+
+---
+
+# 5. v0.1 simulation exit criteria
+
+현재 최소 simulation phase는 다음 조건을 충족했다.
+
+- [x] P1/P2를 공격하는 coordination toy model
+- [x] P5 queue connection 검산
+- [x] P6 potential–realized divergence 재현
+- [x] P7 risk-tiering의 반례/조건성 확인
+- [x] H8 reversibility의 역할 분리
+- [x] synthetic threshold를 실증 threshold와 명확히 구분
+
+따라서 다음 단계는 **telemetry schema → small real agent workflow experiment**다.
 
 시뮬레이션은 계속 **이론을 보호하는 작업이 아니라 이론을 공격하는 작업**으로 유지한다.
