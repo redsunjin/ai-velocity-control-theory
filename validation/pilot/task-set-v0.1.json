@@ -1,0 +1,75 @@
+{
+  "pilot_id": "avct-bounded-pilot-v0.1",
+  "status": "instrumentation-design",
+  "empirical_data": false,
+  "workflow": "isolated repository-local software and analysis tasks",
+  "safety_boundary": {
+    "production_write": false,
+    "external_customer_action": false,
+    "payment_action": false,
+    "personal_data": false,
+    "credential_access": false,
+    "irreversible_external_action": false,
+    "branch_local_writes": true,
+    "rollback_required": true
+  },
+  "tasks": [
+    {
+      "task_id": "pilot-t01",
+      "name": "deprecated-theory-patch",
+      "difficulty": "low",
+      "task_type": "bounded-write",
+      "goal": "Replace an intentionally stale K definition with the current AVCT definition while preserving explicit non-safety claims.",
+      "ground_truth": "deterministic-text-check",
+      "expected_controls": ["file-write-review", "theory-boundary-check"],
+      "reversible": true
+    },
+    {
+      "task_id": "pilot-t02",
+      "name": "architecture-manifest-repair",
+      "difficulty": "low",
+      "task_type": "bounded-write",
+      "goal": "Repair a small architecture manifest so required agent, control-routing, and rollback fields satisfy a fixed checklist.",
+      "ground_truth": "schema-check",
+      "expected_controls": ["config-review", "schema-validation"],
+      "reversible": true
+    },
+    {
+      "task_id": "pilot-t03",
+      "name": "telemetry-metric-derivation",
+      "difficulty": "medium",
+      "task_type": "analysis",
+      "goal": "Derive AVCT metrics from a provided JSONL event stream and match committed expected values.",
+      "ground_truth": "exact-metric-match",
+      "expected_controls": ["analysis-result-check"],
+      "reversible": true
+    },
+    {
+      "task_id": "pilot-t04",
+      "name": "coordination-duplicate-analysis",
+      "difficulty": "medium",
+      "task_type": "analysis",
+      "goal": "Identify duplicate/conflicting actions in a bounded structured dataset and produce a fixed-format summary.",
+      "ground_truth": "exact-set-and-count-match",
+      "expected_controls": ["analysis-result-check"],
+      "reversible": true
+    },
+    {
+      "task_id": "pilot-t05",
+      "name": "reversible-config-change",
+      "difficulty": "medium",
+      "task_type": "bounded-write-and-test",
+      "goal": "Make a branch-local configuration change, run deterministic validation, and record rework or rollback if the first change fails.",
+      "ground_truth": "deterministic-test",
+      "expected_controls": ["config-review", "test-gate", "rollback-check"],
+      "reversible": true
+    }
+  ],
+  "planned_real_pilot": {
+    "condition": "E1/C1",
+    "task_count": 5,
+    "agent_count": 1,
+    "control": "full-gate",
+    "purpose": "validate instrumentation overhead and traceability before comparative experiments"
+  }
+}

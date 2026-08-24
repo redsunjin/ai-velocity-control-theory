@@ -1,0 +1,112 @@
+name: AVCT Telemetry Pilot
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'validation/telemetry/**'
+      - 'validation/pilot/**'
+      - '.github/workflows/telemetry-pilot.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'validation/telemetry/**'
+      - 'validation/pilot/**'
+      - '.github/workflows/telemetry-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-instrumentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile telemetry tools
+        run: |
+          python -m py_compile \
+            validation/telemetry/validate_telemetry.py \
+            validation/telemetry/derive_metrics.py
+
+      - name: Validate four-task linkage fixture
+        run: |
+          python validation/telemetry/validate_telemetry.py \
+            validation/telemetry/samples/pilot-events.jsonl \
+            --summary /tmp/telemetry-validation-summary.json
+          cat /tmp/telemetry-validation-summary.json
+
+      - name: Derive AVCT fixture metrics
+        run: |
+          python validation/telemetry/derive_metrics.py \
+            validation/telemetry/samples/pilot-events.jsonl \
+            --output /tmp/pilot-derived.json
+          cat /tmp/pilot-derived.json
+
+      - name: Compare derived metrics with frozen expectation
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          expected = json.loads(Path('validation/telemetry/samples/expected-pilot-metrics.json').read_text())
+          actual = json.loads(Path('/tmp/pilot-derived.json').read_text())
+          if actual != expected:
+              print('Expected:')
+              print(json.dumps(expected, indent=2, ensure_ascii=False))
+              print('Actual:')
+              print(json.dumps(actual, indent=2, ensure_ascii=False))
+              raise SystemExit('Derived telemetry metrics changed unexpectedly.')
+          print('Derived metrics match the frozen fixture.')
+          PY
+
+      - name: Verify broken action linkage is rejected
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          source = Path('validation/telemetry/samples/pilot-events.jsonl')
+          events = [json.loads(line) for line in source.read_text().splitlines() if line.strip()]
+          for event in events:
+              if event['event_type'] == 'control':
+                  event['action_id'] = 'missing-action'
+                  break
+          Path('/tmp/broken-link.jsonl').write_text(
+              '\n'.join(json.dumps(e, ensure_ascii=False) for e in events) + '\n'
+          )
+          PY
+          if python validation/telemetry/validate_telemetry.py /tmp/broken-link.jsonl; then
+            echo 'Validator incorrectly accepted broken action linkage.'
+            exit 1
+          fi
+          echo 'Broken action linkage correctly rejected.'
+
+      - name: Verify sensitive payload fields are rejected
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          source = Path('validation/telemetry/samples/pilot-events.jsonl')
+          events = [json.loads(line) for line in source.read_text().splitlines() if line.strip()]
+          events[0]['raw_prompt'] = 'fixture value that must never be accepted'
+          Path('/tmp/sensitive-payload.jsonl').write_text(
+              '\n'.join(json.dumps(e, ensure_ascii=False) for e in events) + '\n'
+          )
+          PY
+          if python validation/telemetry/validate_telemetry.py /tmp/sensitive-payload.jsonl; then
+            echo 'Validator incorrectly accepted a forbidden sensitive payload key.'
+            exit 1
+          fi
+          echo 'Sensitive payload key correctly rejected.'
