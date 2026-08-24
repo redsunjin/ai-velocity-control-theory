@@ -10,11 +10,15 @@ AI 에이전트 조직에서 **실행 속도, 병렬성, 조정 효율, 신뢰�
 
 > **Agentic execution capacity가 증가할 때 potential throughput과 realized performance는 언제 분리되며, control architecture는 그 분리점을 얼마나 이동시키는가?**
 
-이 질문은 단순히 “AI가 빠르면 유리한가?”가 아니라, **빠르고 병렬적인 AI 실행을 실제 성과로 얼마나 흡수할 수 있는가**를 다룹니다.
+v0.1 hardening 이후에는 한 조건을 더 붙입니다.
+
+> **그 이동이 residual-risk budget을 넘지 않는가?**
+
+즉 단순히 “AI가 빠르면 유리한가?”가 아니라, **빠르고 병렬적인 AI 실행을 실제 성과로 얼마나 안전하게 흡수할 수 있는가**를 다룹니다.
 
 ## 현재 기준선: v0.1
 
-v0.1의 claim boundary는 2026-08-23 첫 구조 검증 이후 고정했습니다. 아직 경험적으로 검증된 법칙은 아닙니다.
+v0.1의 claim boundary는 2026-08-24 선행연구 재검증과 두 번의 구조적 시뮬레이션 이후 고정했습니다. 아직 경험적으로 검증된 법칙은 아닙니다.
 
 세 층을 구분합니다.
 
@@ -32,21 +36,36 @@ K        = Λ_control / μ_control
 
 란체스터 제2법칙은 AI 성과의 직접 예측식이 아니라, **집중되고 병렬화된 실행 단위가 특정 조건에서 비선형 효과를 낼 수 있다는 분석적 렌즈**로만 사용합니다.
 
-## 첫 구조 검증
+## 구조 검증 1 — coordination + saturation
 
 `validation/simulations/avct_v01.py`로 H1/H2/H5/H6의 최소 시뮬레이션을 실행했습니다.
-
-첫 결과는 다음을 보여줍니다.
 
 - 강결합 task proxy에서 agent scale-out 효율과 `S`가 더 빠르게 감소할 수 있음
 - `K≈1` 부근에서 queue delay가 민감해지는 구조 재현
 - control capacity가 병목이 되면 potential throughput과 realized throughput이 분리됨
 - delay/rework/opportunity cost가 있는 조건에서는 realized value의 역전도 가능함
-- `μ_control`을 높이면 포화/역전 지점이 이동함
 
-주의: 이는 **toy-model structural sanity check**이며 실제 조직에 대한 경험적 증거가 아닙니다. 특히 queue saturation은 기존 queueing theory의 결과이지 AVCT의 신규성 주장이 아닙니다.
+주의: queue saturation은 기존 queueing theory의 결과이며 AVCT의 신규성 주장이 아닙니다.
 
-자세한 결과: `validation/results/first-simulation-v0.1.md`
+결과: `validation/results/first-simulation-v0.1.md`
+
+## 구조 검증 2 — control architecture + residual risk
+
+`validation/simulations/avct_v01_control_architecture.py`로 H6/H7/H8을 추가 공격했습니다.
+
+핵심 결과:
+
+- risk-tiered routing은 human control arrival과 `K`를 크게 낮출 수 있음
+- 그러나 automated verifier가 약하면 unsafe escape가 증가함
+- 해당 synthetic assumptions에서는 verifier sensitivity 약 99% 부근에서 stable full-review baseline과 유사한 unsafe-escape 수준이 나타남
+- 이 99%는 **현실 안전 기준이 아니라 toy-model sensitivity boundary**임
+- reversibility를 높이면 동일한 unsafe-escape count에서도 harm / recovery loss가 감소함
+
+따라서 P7은 다음처럼 조건부로 수정했습니다.
+
+> **Control architecture는 control load를 낮추는 것만으로 충분하지 않으며, residual risk를 허용 가능한 risk budget 안에 유지할 때만 sustainable execution frontier를 개선한다.**
+
+결과: `validation/results/second-simulation-v0.1.md`
 
 ## 검증된 novelty boundary
 
@@ -60,9 +79,14 @@ AVCT는 다음을 새롭게 발견했다고 주장하지 않습니다.
 - finite oversight capacity
 - queue saturation / utilization
 - HITL, AITL, guardrail, escalation 등의 통제 메커니즘 자체
+- risk-tiered / adaptive oversight 자체
 - OODA/NBKL의 의사결정 동기화·자원 경쟁 구조
 
-AVCT의 잠재 기여는 이 요소들을 **agentic execution generation → coordination/reliability → control demand → control architecture → realized performance**의 하나의 측정 가능한 운영 동역학으로 연결하는 데 있습니다.
+AVCT의 잠재 기여는 이 요소들을 **agentic execution generation → coordination/reliability → control demand → control architecture → residual risk/recovery → realized performance**의 하나의 측정 가능한 운영 동역학으로 연결하는 데 있습니다.
+
+선행연구 검증 체크포인트:
+
+- `research/literature-validation-2026-08-24.md`
 
 ## 저장소 구조
 
@@ -79,15 +103,18 @@ AVCT의 잠재 기여는 이 요소들을 **agentic execution generation → coo
 │   └── working-paper-v0.1.md
 ├── research/
 │   ├── literature-review.md
+│   ├── literature-validation-2026-08-24.md
 │   └── related-work.md
 └── validation/
     ├── README.md
     ├── hypotheses.md
     ├── simulation-plan.md
     ├── simulations/
-    │   └── avct_v01.py
+    │   ├── avct_v01.py
+    │   └── avct_v01_control_architecture.py
     └── results/
         ├── first-simulation-v0.1.md
+        ├── second-simulation-v0.1.md
         └── generated/
 ```
 
@@ -98,7 +125,8 @@ AVCT의 잠재 기여는 이 요소들을 **agentic execution generation → coo
 - 비선형성은 `β`처럼 **검증할 값**으로 둔다.
 - `K`의 queue 성질을 AVCT의 신규 수학으로 주장하지 않는다.
 - 병렬성을 공짜로 가정하지 않는다.
-- 통제를 속도의 반대항이 아니라 **속도를 실현 성과로 변환하는 생산 인프라**로 검증한다.
+- 낮은 `K`를 곧 좋은 통제로 간주하지 않는다. residual risk와 realized value를 함께 본다.
+- reversibility를 오류율 감소와 혼동하지 않는다. 주로 loss/recovery 변수로 본다.
 - 시뮬레이션에 넣은 가정이 결과에서 재현된 것을 경험적 검증으로 포장하지 않는다.
 - 선행연구, 본 이론의 가설, 시뮬레이션 결과, 실증 결과를 명확히 구분한다.
 
@@ -124,18 +152,17 @@ AVCT theory v0.x+1
 
 ## 상태
 
-- **Stage:** Conceptual theory + first structural validation
+- **Stage:** Conceptual theory + two structural sensitivity validations
 - **Baseline:** v0.1 claim boundary frozen
 - **Empirical validation:** Not yet completed
 - **Public claim level:** Hypothesis / conceptual framework
-- **First simulation:** Completed
-- **Next validation:** control architecture / risk routing / reversibility
+- **Simulation phase:** Minimal v0.1 hardening completed
+- **Next validation:** real agent workflow telemetry + bounded empirical experiment
 
 ## 다음 단계
 
-1. dependency-graph 기반 coordination model로 2차 검증
-2. risk-tiered routing으로 `q_control < 1` 실험
-3. reversible / irreversible action 분리
-4. reviewer accuracy / cognitive-load feedback 추가
-5. 실제 agent workflow에서 측정할 telemetry schema 확정
-6. v0.1 기준을 RoundZero `theory-brief`에 동기화하고 소설을 재검토
+1. 실제 agent workflow용 telemetry schema 확정
+2. 작은 software/analysis workflow에서 architecture A/B 실험 설계
+3. `A`, `λ`, duplicate/conflict, `Λ_control`, service time, unsafe escape, rollback/rework 측정
+4. 실제 로그로 P1/P2/P6/P7을 공격
+5. v0.1 기준을 RoundZero `theory-brief`에 동기화하고 소설을 재검토
