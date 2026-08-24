@@ -49,27 +49,45 @@ AI 실행 범위와 실행률이 증가할수록 별도 검토·승인·감사�
 
 즉 속도 증가와 실현 성과 사이의 관계는 task value decay, control architecture, reliability, reversibility에 조건부일 수 있다.
 
-**v0.1 simulation note:** time-insensitive 조건에서는 포화, delay-sensitive 조건에서는 강한 하락이 재현되었다. 하락의 강도는 가정한 decay 함수에 민감하므로 보편 법칙으로 주장하지 않는다.
+**v0.1 simulation note:** 첫 시뮬레이션에서는 time-insensitive 조건의 포화와 delay-sensitive 조건의 하락이 재현됐다. 두 번째 시뮬레이션에서도 full-review saturation point와 tiered-control saturation point가 달라지면서 divergence point가 architecture-dependent함을 재현했다. 모두 toy-model 결과이며 실증 증거가 아니다.
 
-## P7 — 통제 아키텍처 명제
+## P7 — 통제 아키텍처의 조건부 생산성 명제
 
-예외 중심 관리, 권한 경계, 관측 가능성, 자동 차단, reversibility가 높은 조직은 동일한 AI 실행량에서 더 낮은 `Λ_control` 또는 더 높은 `μ_control`을 달성할 수 있다.
+예외 중심 관리, 권한 경계, 자동 검증, 위험 기반 라우팅, 관측 가능성 등은 동일한 raw execution capacity에서 `q_control`을 낮추거나 `μ_control`을 높여 execution–realization divergence point를 이동시킬 수 있다.
 
-따라서 통제는 속도의 단순한 반대항이 아니라 **속도를 성과로 변환하는 생산 인프라**로 작동할 수 있다.
+그러나 **통제부하 감소만으로 우수한 architecture라고 볼 수 없다.** residual risk, false-negative escape, recovery loss가 허용 가능한 risk budget 안에 있어야 한다.
+
+따라서 통제 아키텍처의 성과는 최소한 다음을 함께 평가해야 한다.
+
+- `K`
+- unsafe escape / executed action
+- harm / executed action
+- realized net value / time
+- human review load / time
+
+**v0.1 second-simulation note:** synthetic stable baseline `A=4`에서 risk-tiered routing은 `K≈0.50 → 0.074`로 human-control load를 크게 줄였지만 verifier sensitivity가 낮을 때 unsafe escape가 증가했다. 해당 toy assumptions에서는 automated-verifier sensitivity가 약 99% 부근일 때 full-review baseline과 유사한 unsafe-escape 수준을 보였다. 이 값은 현실 임계치가 아니며 sensitivity analysis 결과일 뿐이다.
+
+**반증 가능성:** 실제 workload에서 control routing이 `K`를 낮추더라도 residual risk를 구조적으로 악화시키거나 realized value를 개선하지 못한다면 P7의 설계 기여는 약화된다.
+
+### Reversibility의 위치
+
+Reversibility는 P7의 control-architecture 변수이지만 주로 error probability보다 **error consequence / recovery loss**를 조절하는 변수로 취급한다.
+
+두 번째 toy simulation에서는 동일 `K`와 동일 unsafe-escape count에서 reversibility만 높였을 때 harm / 1,000 executed actions가 감소했다. 따라서 향후에는 reversibility를 `R` 내부에 숨기지 않고 loss function 또는 별도 recovery 변수로 측정한다.
 
 ## P8 — 지속 가능한 우위 명제
 
 단기적으로 가장 높은 `λ`를 가진 조직과 장기적으로 가장 높은 누적 성과를 가진 조직은 동일하지 않을 수 있다.
 
-장기 우위는 `N_eff`의 크기뿐 아니라 `S`, `R`, `K`, reversibility를 안정적으로 유지하는 능력에 의해 결정될 수 있다.
+장기 우위는 `N_eff`의 크기뿐 아니라 `S`, `R`, `K`, residual risk, reversibility를 안정적으로 유지하는 능력에 의해 결정될 수 있다.
 
 ---
 
 # v0.1 이후 우선 검증 순서
 
-1. **P6** — potential throughput과 realized performance가 분리되는 조건
+1. **P6/P7** — actual agent workflow에서 potential throughput과 realized performance의 divergence 및 control-architecture frontier
 2. **P1/P2** — 실제 multi-agent workflow에서 scale-out efficiency와 coordination loss
-3. **P4/P7** — risk-tiering과 control architecture가 `Λ_control`, `μ_control`을 얼마나 이동시키는지
+3. **P4/P7** — risk-tiering, automated verification, authority boundary가 `Λ_control`, `μ_control`, residual risk를 얼마나 이동시키는지
 4. **P3** — 실제 시장/학습 환경에서 `β>1`이 나타나는 조건
 5. **P8** — 장기 운영 데이터 또는 장기 시뮬레이션
 
