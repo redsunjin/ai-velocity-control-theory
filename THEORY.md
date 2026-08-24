@@ -1,188 +1,302 @@
-# AI Velocity–Control Theory — v0.1 Baseline
+# AI Velocity–Control Theory (AVCT) — v0.1 Baseline
 
-## 0. 지위
+## 1. 중심 명제
 
-이 문서는 AI Velocity–Control Theory(AVCT)의 **현재 Source of Truth**입니다.
+AI 에이전트 조직의 경쟁우위는 단순한 실행 속도에서 나오지 않는다.
 
-AVCT는 아직 실증적으로 확립된 법칙이 아닙니다. 아래 관계식은 연구를 가능하게 하기 위한 **개념 모형과 검증 가설**입니다. 이후 문헌 검토, 시뮬레이션, 사례 연구에 따라 변수·함수형·명칭이 바뀔 수 있습니다.
+실행 속도와 병렬성이 일정 시간 창 안에서 **유효 실행량**을 만들고, 그 실행량이 조정 가능하고 신뢰할 수 있으며, 조직의 통제 구조가 이를 지연·오류·재작업·책임 공백 없이 흡수할 때 비로소 실현 성과로 전환된다.
 
----
+따라서 AVCT의 핵심 질문은 다음이다.
 
-## 1. 중심 문제
-
-AI 에이전트는 인간 조직보다 빠른 반복과 병렬 실행을 가능하게 한다. 그러나 실행량이 증가할수록 검토, 승인, 예외 처리, 책임 귀속, 회수, 감사에 필요한 통제 작업도 증가한다.
-
-따라서 조직의 성과는 단순한 AI 속도의 함수가 아니라 다음 두 능력의 관계에서 결정된다는 것이 AVCT의 출발 가설이다.
-
-1. **실제로 의미 있는 행동을 만들어내는 능력**
-2. **그 행동을 안전하고 책임 있게 흡수하는 능력**
-
-AVCT의 중심 명제는 다음과 같다.
-
-> **AI 시대의 지속 가능한 우위는 최대 실행 속도가 아니라, 경쟁적으로 유효한 실행량을 통제 가능한 범위 안에서 가장 빠르게 만들어내는 능력에서 발생한다.**
+> **Agentic execution capacity가 증가할 때 potential throughput과 realized performance는 언제 분리되며, control architecture는 residual risk를 허용 가능한 범위에 유지하면서 그 분리점을 얼마나 이동시키는가?**
 
 ---
 
-## 2. 세 층의 모형
+## 2. 이론의 세 층
 
 ### Layer A — Effective Action Mass
 
-일정 시간 창 `T` 동안 만들어지는 유효 실행량을 `N_eff(T)`로 둔다.
-
-`N_eff`는 단순한 API 호출 수나 에이전트 수가 아니다. 목표에 기여하고, 중복·충돌·오류를 제외한 **유효 실행 단위**의 양을 나타내기 위한 분석 변수다.
-
-핵심 결정요인은 다음과 같다.
-
-- 병렬 실행 가능한 에이전트 수 `A`
-- 에이전트당 실행률 `λ`
-- 경쟁 또는 의사결정 시간 창 `T`
-- 조정 효율 `S`
-- 실행 신뢰도 `R`
-
-v0.1의 최소 표현은 다음과 같다.
-
 `N_eff(T) = A · λ · T · S · R`
 
-단, `S`와 `R`을 상수로 가정하지 않는 것이 중요하다. 특히 `S`는 에이전트 수와 작업 결합도가 높아질수록 낮아질 수 있다.
+- `A`: 병렬 실행에 참여하는 agent 수
+- `λ`: agent당 candidate action rate
+- `T`: 의미 있는 response / competition window
+- `S`: coordination efficiency
+- `R`: execution reliability
+
+중요:
+
+`A`와 `λ`가 증가해도 `S`와 `R`이 하락하면 실제 유효 실행량은 같은 비율로 증가하지 않는다.
 
 ---
 
-### Layer B — Competitive Effect
-
-유효 실행량이 성과에 미치는 효과를 `P_AI`로 표시한다.
-
-AVCT는 **제곱 효과를 전제하지 않는다.** v0.1에서는 다음 일반형을 사용한다.
+### Layer B — Competitive / Organizational Effect
 
 `P_AI = α · N_eff^β`
 
-- `α`: 환경·시장·업무 특성에 따른 효과 계수
-- `β`: 실행량 증가가 효과로 변환되는 탄력성/증폭 계수
+`β`는 고정된 법칙이 아니라 검증할 값이다.
 
-해석:
+- `β < 1`: congestion / diminishing returns
+- `β = 1`: proportional effect
+- `β > 1`: conditional superlinear effect
+- `β = 2`: Lanchester-square-like special case
 
-- `β < 1` : 혼잡, 중복, 수확 체감
-- `β = 1` : 선형 효과
-- `1 < β < 2` : 네트워크·학습·선점 등으로 인한 비선형 효과
-- `β = 2` : 란체스터 제곱법칙과 유사한 특수 경계 사례
+AVCT는 `β=2`를 기본값으로 사용하지 않는다.
 
-따라서 란체스터 제2법칙은 `β=2`를 보장하는 근거가 아니라, **왜 특정 경쟁 조건에서 비선형 집중 효과를 탐색할 가치가 있는지를 제공하는 영감**이다.
+Lanchester는 **inspiration / nonlinear boundary case**이지 AI 조직 성과의 직접 derivation source가 아니다.
 
 ---
 
 ### Layer C — Control Saturation
 
-AI가 만들어내는 행동 중 일부는 인간 또는 조직적 통제가 필요하다. 통제가 필요한 작업의 도착률을 `Λ_control`, 검토·승인·차단·회수할 수 있는 통제 처리율을 `μ_control`로 둔다.
-
 `K = Λ_control / μ_control`
 
-이를 **Control Saturation Ratio**, 한국어로 **통제 포화비(기존 작업명: 통제 초과비)**라고 부른다.
+- `Λ_control`: control-requiring action arrival rate
+- `μ_control`: effective control-processing capacity
 
-queueing 관점의 단순 해석에서는:
+`K`는 queue-utilization-like operational index다.
 
-- `K < 1` : 통제 처리율이 평균 유입률보다 큼
-- `K → 1` : 대기·검토 지연·인지 부하가 급격히 민감해지는 구간
-- `K > 1` : 현재 처리구조가 유지된다면 미처리 통제 작업이 누적되는 구간
+- `K < 1`: 평균 control capacity가 평균 control demand를 초과
+- `K → 1`: compatible queueing model에서 delay가 민감해질 수 있음
+- `K > 1`: operating rule이 바뀌지 않으면 unresolved control work가 누적될 수 있음
 
-중요: `K=1`을 현실 조직의 보편적 안전 임계값이라고 주장하지 않는다. 변동성, 우선순위, 위험도, 배치 처리, 자동 차단 구조에 따라 실제 위험 임계점은 달라질 수 있다.
-
----
-
-## 3. 두 종류의 속도
-
-AVCT는 속도를 하나로 보지 않는다.
-
-### 실행 속도
-AI가 새로운 행동·실험·변경을 만들어내는 속도.
-
-### 통제 속도
-조직이 해당 행동을 이해하고, 검증하고, 승인하거나 중지하고, 필요 시 되돌릴 수 있는 속도.
-
-두 속도의 차이가 커질수록 조직은 더 많은 잠재적 성과를 얻을 수 있지만 동시에 통제 부채(control debt)를 축적할 수 있다.
+이 queue 성질 자체는 AVCT의 신규 수학이 아니다.
 
 ---
 
-## 4. 통제는 브레이크가 아니라 처리 아키텍처다
+## 3. Execution–Control Feedback
 
-통제 용량을 단순히 사람 수로 정의하지 않는다. 조직은 다음 장치를 통해 `μ_control`을 높이거나 `Λ_control` 자체를 줄일 수 있다.
-
-- 사전 정의된 권한 경계
-- 위험 등급별 자동/수동 승인 분기
-- 근거 및 실행 로그
-- 자동 차단 조건
-- 되돌릴 수 있는 실행(reversibility)
-- 샘플링 검토
-- 예외 중심 검토
-- 검증 에이전트 및 정책 엔진
-- 병렬 검토 큐
-
-따라서 AVCT의 목표는 AI를 느리게 만드는 것이 아니라 **통제가 필요한 행동과 그렇지 않은 행동을 분리하고, 위험한 실행만 인간의 제한된 판단 능력에 집중시키는 구조**를 설명하는 것이다.
-
----
-
-## 5. 란체스터와의 관계
-
-### 채택하는 직관
-
-- 집중된 다수의 유효 단위는 단순 합 이상의 효과를 만들 수 있다.
-- 양적 차이가 특정 상호작용 구조에서 비선형 결과로 이어질 수 있다.
-- 단위의 효율과 수량을 함께 보아야 한다.
-
-### 채택하지 않는 주장
-
-- AI 실행 속도 자체가 병력 수와 동일하다는 주장
-- 속도가 2배가 되면 경쟁력이 반드시 4배가 된다는 주장
-- 모든 비즈니스 경쟁이 란체스터 제2법칙을 따른다는 주장
-
-AVCT에서 란체스터는 **inspired model / analytical lens**다.
-
----
-
-## 6. 핵심 피드백 루프
-
-AVCT가 설명하려는 동역학은 다음과 같다.
+AVCT의 핵심은 세 층을 하나의 feedback system으로 보는 데 있다.
 
 ```text
-실행 속도/병렬성 증가
-        ↓
-유효 실행량 N_eff 증가
-        ↓
-성과·학습·선점 가능성 증가
-        ↓
-동시에 통제 요구 Λ_control 증가
-        ↓
-통제 포화 K 상승
-        ↓
-조정 비용·대기·오류·책임 공백 증가
-        ↓
-R과 S 하락 가능
-        ↓
-N_eff와 실제 성과가 다시 감소
+A / λ 증가
+   ↓
+candidate action 증가
+   ↓
+coordination + reliability filtering
+   ↓
+N_eff 증가
+   ↓
+potential value 증가
+   ↓
+risk routing / control-demand generation
+   ↓
+Λ_control 증가 또는 재구성
+   ↓
+K 변화
+   ↓
+delay / backlog / rework / residual risk / recovery cost
+   ↓
+realized performance 변화
+   ↓
+S / R / future control load에 feedback
 ```
 
-따라서 AVCT는 단순한 “빠를수록 좋다” 모델이 아니라 **가속과 포화가 결합된 피드백 모델**이다.
+따라서 경영 문제는 `max λ`가 아니라:
+
+> **control, coordination, reliability, residual-risk, reversibility 제약 아래 realized performance를 최적화하는 것**
+
+이다.
 
 ---
 
-## 7. 현재의 연구 경계
+## 4. Execution–Control Frontier
 
-v0.1에서는 다음을 아직 주장하지 않는다.
+v0.1 hardening 이후 AVCT는 낮은 `K` 자체를 좋은 통제의 증거로 보지 않는다.
 
-- `β`의 보편적 값
-- `S(A)`의 구체 함수형
-- `K`와 사고 확률 사이의 보편적 관계
-- 공공서비스의 사회적 이익이 속도의 제곱으로 증가한다는 주장
-- 특정 산업에서 AVCT가 실제 성과를 예측한다는 주장
+control architecture는 최소한 다음을 함께 비교해야 한다.
 
-이 항목들은 검증 과제로 남긴다.
+1. control saturation `K`
+2. human / automated review load
+3. unsafe escape rate
+4. harm / recovery cost
+5. realized net value / time
+
+즉 **control-load reduction과 residual-risk preservation이 동시에 이루어져야** sustainable improvement로 본다.
+
+2차 synthetic simulation에서는 risk-tiered routing이 `K`를 크게 낮추면서도 verifier quality가 낮을 때 unsafe escape를 증가시키는 반례가 나왔다. 따라서 P7은 조건부 명제로 유지한다.
 
 ---
 
-## 8. v0.1 성공 조건
+## 5. Reversibility
 
-AVCT v0.1이 이론 기준선으로 기능하려면 최소한 다음 조건을 만족해야 한다.
+Reversibility는 execution reliability와 구분한다.
 
-1. 변수에 측정 가능한 operational definition이 존재할 것
-2. 반증 가능한 명제가 존재할 것
-3. 기존 queueing, human oversight, multi-agent coordination, time-based competition 연구와 차이를 명시할 것
-4. 시뮬레이션으로 최소 하나의 예상 패턴을 재현할 것
-5. RoundZero에서 발견되는 반례를 별도 이론 이슈로 환류할 것
+오류가 발생하지 않는 능력과, 오류가 발생했을 때 되돌리고 회수할 수 있는 능력은 다른 속성이다.
+
+v0.1에서는 reversibility를 주로:
+
+- error consequence
+- rollback / recovery time
+- recovery cost
+
+를 낮추는 **loss-severity modifier**로 다룬다.
+
+---
+
+## 6. 인간 통제 용량의 의미
+
+AVCT는 `μ_control`을 human reviewer headcount로 축소하지 않는다.
+
+control capacity는 다음의 조합일 수 있다.
+
+- design-time constraints
+- guardrails
+- automated verification
+- agent-in-the-loop oversight
+- human-in-the-loop review
+- escalation
+- sampled audit
+- authority boundaries
+- observability
+- circuit breakers
+
+즉 통제 용량은 생물학적 인간 능력만이 아니라 **socio-technical control architecture의 effective service capacity**다.
+
+다만 automated control의 speed/scalability가 human judgment의 accountability나 legitimacy를 자동 대체한다고 가정하지 않는다.
+
+---
+
+## 7. v0.1 핵심 명제
+
+### P1 — Conditional scale-out
+
+Agent count와 execution rate 증가는 candidate action volume을 증가시키지만 effective action mass의 증가는 `S`, `R`에 조건부다.
+
+### P2 — Coordination dependence
+
+Task coupling과 communication dependency가 높을수록 scale-out efficiency가 감소할 가능성이 있다.
+
+### P3 — Conditional nonlinear effect
+
+Superlinear effect는 특정 learning, first-response, concentration, network mechanism이 존재할 때만 나타날 수 있다. `β>1`은 보편값이 아니다.
+
+### P4 — Control-demand generation
+
+Execution scope/rate 증가는 control-requiring action의 절대량을 증가시키는 경향이 있으나 routing/authority/verification architecture가 `q_control`을 바꿀 수 있다.
+
+### P5 — Queueing connection
+
+높은 `K`와 delay/backlog의 관계는 기존 queueing theory에 연결한다. 이 성질 자체를 AVCT novelty로 주장하지 않는다.
+
+### P6 — Potential–realized divergence
+
+Potential throughput은 증가해도 control bottleneck, delay, rework, residual risk, recovery cost 때문에 realized performance가 포화 또는 하락할 수 있다.
+
+### P7 — Conditional control-architecture productivity
+
+Control architecture는 divergence point를 이동시킬 수 있지만 residual risk와 recovery cost를 허용 가능한 budget 안에 유지해야 sustainable improvement로 본다.
+
+### P8 — Sustainable velocity
+
+가장 높은 short-run execution rate를 가진 조직이 가장 높은 long-run realized value를 갖는다는 보장은 없다.
+
+---
+
+## 8. 신규성 경계
+
+AVCT는 다음을 새롭게 발견했다고 주장하지 않는다.
+
+- time-based competition
+- finite human oversight
+- human cognitive-load limit
+- automation bias / complacency
+- queue saturation / utilization
+- multi-agent coordination cost
+- meaningful human oversight
+- risk-tiered / adaptive intervention
+- guardrail / HITL / AITL mechanism
+- OODA / NBKL dynamics
+- Lanchester square law
+
+AVCT의 candidate contribution은 이들을 하나의 **measurable execution–control feedback system**으로 연결하고, control load / residual risk / realized performance의 joint frontier를 실증하는 데 있다.
+
+---
+
+## 9. Lanchester의 역할
+
+AVCT는 초기에 사용했던:
+
+`P_AI = V²`
+
+또는:
+
+`P_AI = N_eff²`
+
+를 폐기했다.
+
+Lanchester의 역할은 다음으로 제한한다.
+
+- coordinated multiplicity가 특정 조건에서 nonlinear outcome을 낼 수 있다는 질문을 제기
+- `β=2`라는 비교용 특수경계를 제공
+- quantity, quality, concentration의 상호작용을 생각하는 analytical lens 제공
+
+실제 AI 조직 효과는 실증적으로 추정한다.
+
+---
+
+## 10. OODA / NBKL의 역할
+
+OODA와 Networked Boyd–Kuramoto–Lanchester 연구는 networked decision synchronization과 resource competition을 결합하는 강한 관련 연구다.
+
+하지만 AVCT에서는 **supporting analogue**로만 둔다.
+
+일반 enterprise agent workflow의 control-service bottleneck이나 realized-performance divergence를 NBKL에서 직접 도출하지 않는다.
+
+---
+
+## 11. 현재 검증 상태
+
+### Structural simulation 1
+
+- task coupling에 따른 scale-out efficiency 차이
+- queue saturation sanity check
+- potential–realized divergence
+
+### Structural simulation 2
+
+- risk-tiered control routing
+- automated-verifier sensitivity
+- residual-risk counterexample
+- reversibility / loss severity
+
+두 simulation 모두 synthetic toy models이며 empirical evidence가 아니다.
+
+---
+
+## 12. 현재 가장 중요한 실증 질문
+
+다음 단계는 실제 agent workflow에서 다음을 측정하는 것이다.
+
+> **같은 task set과 execution capacity에서 서로 다른 agent/control architecture가 `N_eff`, `K`, residual risk, recovery cost, realized value를 어떻게 변화시키는가?**
+
+이 질문에 실제 데이터로 답하지 못하면 AVCT는 conceptual synthesis에 머문다.
+
+---
+
+## 13. v0.1 금지 주장
+
+공개 문서에서 다음을 법칙 또는 검증된 사실처럼 쓰지 않는다.
+
+- “AI 속도 2배 = 경쟁력 4배”
+- `P=V²`
+- `P=N_eff²`
+- `K=1`이 모든 조직의 보편 위험 임계점이라는 주장
+- finite oversight capacity를 AVCT가 최초 발견했다는 주장
+- adaptive/risk-tiered oversight를 AVCT가 최초 제안했다는 주장
+- synthetic verifier sensitivity를 실제 safety threshold로 사용하는 것
+- 공공 사회적 이익이 속도의 제곱으로 증가한다는 주장
+
+---
+
+## 14. 이론이 실패하는 조건
+
+다음 중 하나가 반복적으로 확인된다면 AVCT는 별도 이론으로서 약화되거나 폐기되어야 한다.
+
+1. agentic execution과 control load 사이에 의미 있는 구조적 관계가 없다.
+2. potential–realized divergence가 control variables보다 다른 기존 변수로 충분히 설명된다.
+3. AVCT 변수들이 기존 queueing, human-factors, multi-agent, management-control 모델의 단순 병렬 적용보다 추가 설명력/예측력을 제공하지 못한다.
+4. `N_eff`, `Λ_control`, `μ_control`, residual risk를 실제 운영에서 신뢰성 있게 측정할 수 없다.
+5. control architecture 비교에서 AVCT frontier가 실질적인 설계 의사결정에 추가 가치를 제공하지 않는다.
+
+이 실패 가능성을 이론의 일부로 유지한다.
