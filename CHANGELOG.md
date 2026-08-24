@@ -2,6 +2,69 @@
 
 이 문서는 AI Velocity–Control Theory의 개념 변경을 추적한다. 문구 수정이 아니라 **이론의 의미가 바뀌는 변경**을 중심으로 기록한다.
 
+## v0.1-hardening — 2026-08-24
+
+### Literature checkpoint refreshed
+
+`research/literature-validation-2026-08-24.md`를 추가하고 claim boundary를 최신 연구와 다시 대조했다.
+
+확인:
+
+- Stalk(1988): speed/time-based competition은 AVCT 이전의 확립된 전략 문제.
+- Little(1961): arrival/service/queue 관계는 borrowed theory.
+- SILO-BENCH(ACL 2026): multi-agent scale 증가가 coordination success를 보장하지 않음.
+- Nguyen et al.(2026): agentic controllability의 speed/scale vs human cognitive-capacity 문제 확인.
+- Zhu et al.(2026): solve–verify asymmetry와 meaningful oversight architecture 확인.
+- Kumar & Singh(2026): synthetic enterprise tasks에서 adaptive intervention으로 human intervention을 줄이는 peer-reviewed 연구 확인.
+- Kadowaki(2026): finite oversight capacity의 direct-overlap working paper 확인.
+- Cullen et al.(2025): NBKL을 supporting analogue로 유지.
+
+### Second structural validation
+
+`validation/simulations/avct_v01_control_architecture.py`와 결과를 추가했다.
+
+핵심 결과:
+
+- risk-tiered routing은 동일 `μ_control`에서 human control arrival과 `K`를 크게 낮출 수 있었다.
+- 그러나 automated verifier sensitivity가 낮으면 unsafe escape가 증가했다.
+- synthetic stable baseline에서는 약 99% verifier sensitivity 부근에서 full-review와 유사한 unsafe-escape 수준이 나타났다.
+- **99%는 현실 안전 기준이 아니라 toy-model sensitivity boundary다.**
+- reversibility를 높이면 동일 `K`와 동일 unsafe-escape count에서도 harm / recovery loss가 감소했다.
+
+### Theory changed
+
+#### P7/H7 narrowed
+
+이전:
+
+> Better control architecture moves the divergence point.
+
+수정:
+
+> Control architecture가 divergence point를 이동시키는 것만으로는 충분하지 않다. control-load reduction과 함께 residual risk가 허용 가능한 risk budget 안에 있어야 sustainable improvement로 본다.
+
+#### Reversibility clarified
+
+reversibility를 execution reliability `R`의 일부로 뭉개지 않고 **error consequence / recovery loss modifier**로 분리한다.
+
+### v0.1 claim boundary frozen again
+
+현재 금지 claim:
+
+- `P=V²`, `P=N_eff²` 보편법칙
+- `2× speed = 4× competitiveness`
+- finite oversight capacity의 최초성
+- queue saturation의 최초성
+- risk-tiered/adaptive oversight의 최초성
+- synthetic threshold의 현실 안전 기준화
+- public social benefit의 square-law 주장
+
+### Next phase
+
+추가 toy simulation보다 **실제 agent workflow telemetry + bounded empirical experiment**를 우선한다.
+
+---
+
 ## v0.1-freeze — 2026-08-23
 
 ### Claim boundary frozen
@@ -132,8 +195,9 @@ v0.2로 올리기 전 필요한 조건:
 - [x] simulation v0.1 실행
 - [x] `S(A, task)` 가정 1차 민감도 확인
 - [x] `K`와 realized performance의 1차 관계 검토
-- [ ] dependency-graph 기반 coordination model로 재검증
-- [ ] risk-tiered routing (`q_control < 1`) 시뮬레이션
-- [ ] reversibility / reviewer-quality feedback 검증
+- [x] risk-tiered routing (`q_control < 1`) sensitivity simulation
+- [x] reversibility의 loss-modifier 역할 검증
+- [ ] reviewer-quality feedback 검증
 - [ ] management control theory 연결
+- [ ] 실제 agent workflow telemetry 실험
 - [ ] RoundZero의 이론 반례/서사적 모순 수집
