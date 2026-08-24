@@ -126,21 +126,19 @@ Phase A:
 | Condition | Execution | Control |
 |---|---|---|
 | A1 | E1 | C1 |
-| A2 | E4 | C1 |
-| A3 | E4 | C2 |
-| A4 | E4 | C3 |
-
-여기서 `E4`는 4-agent moderate concurrency를 뜻한다.
+| A2 | E2 | C1 |
+| A3 | E2 | C2 |
+| A4 | E2 | C3 |
 
 이 비교로:
 
-1. single → parallel execution 효과
+1. single → 4-agent parallel execution 효과
 2. full gate → tiered control 효과
 3. tiered → reversible tiered 효과
 
 를 분리한다.
 
-그 후 필요하면 E8까지 확장한다.
+그 후 필요하면 `E3`(8-agent)까지 확장한다.
 
 ---
 
