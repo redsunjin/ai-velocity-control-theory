@@ -9,7 +9,7 @@ Run five bounded tasks with:
 - one active agent;
 - concurrency 1;
 - full human gate for state-changing actions;
-- isolated Git branches;
+- isolated Git branches/workspaces;
 - deterministic/rubric ground truth;
 - AVCT JSONL telemetry.
 
@@ -28,6 +28,8 @@ Pin:
 - network access policy
 - instruction/prompt version
 
+The agent's filesystem/read scope should be the **materialized task workspace only**. Do not expose `validation/pilot/evaluator/` or the repository-wide ground-truth files to the agent.
+
 Commit the frozen manifest and record its SHA.
 
 ## Task order
@@ -40,7 +42,37 @@ Use `task-set-v0.1.json` in this order:
 4. `pilot-t04` coordination-duplicate-analysis
 5. `pilot-t05` reversible-config-change
 
+The executable task inputs are frozen in `task-fixtures-v0.1.json`.
+
 Do not reorder after seeing early results unless the run is explicitly restarted with a new pilot version.
+
+## Materialize the agent workspace
+
+For each task, create an empty task workspace and materialize only the instructions/input files:
+
+```bash
+python validation/pilot/materialize_task.py \
+  pilot-t01 \
+  /tmp/avct-pilot/pilot-t01
+```
+
+The generated workspace contains `TASK.md` and task input files only.
+
+Evaluator-only ground truth lives outside that workspace:
+
+`validation/pilot/evaluator/ground-truth-v0.1.json`
+
+Do not copy or mount the evaluator file into the agent-visible workspace.
+
+After the agent finishes, the evaluator runs:
+
+```bash
+python validation/pilot/validate_task_result.py \
+  pilot-t01 \
+  /tmp/avct-pilot/pilot-t01
+```
+
+This validates the task result; it does not generate telemetry automatically.
 
 ## Per-task branch
 
@@ -132,7 +164,8 @@ Stop the pilot and keep Phase 0b open if any of these occur:
 4. ground truth cannot be decided from the pre-written rubric/test;
 5. the task escapes the isolated repository boundary;
 6. instrumentation changes agent behavior so much that the pilot no longer resembles the intended workflow;
-7. the architecture manifest changes mid-run.
+7. the architecture manifest changes mid-run;
+8. the agent can read evaluator-only ground-truth files.
 
 A stopped run is a valid instrumentation result and must be retained.
 
@@ -177,5 +210,3 @@ For each run, report:
 ## Interpretation rule
 
 No result from this five-task E1/C1 pilot should be used to claim that AVCT predicts organizational performance.
-
-The only allowed conclusion is whether the instrumentation, ground-truth process, and control-event linkage are usable enough to begin the comparative experiment.
