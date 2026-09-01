@@ -1,0 +1,91 @@
+# Frozen AVCT E1/C1 pilot architecture
+#
+# This is the pre-run manifest for the first real E1/C1 instrumentation
+# check. Values intentionally marked "not-exposed-by-current-runner" are
+# frozen limitations of the current runner, not inferred values.
+
+architecture_id: e1c1-pilot-v0.1-20260901
+status: frozen-pre-run
+experiment_condition: E1/C1
+
+baseline:
+  repository: redsunjin/ai-velocity-control-theory
+  branch_before_manifest: main
+  commit_before_manifest: 2f42edd18097a5e1bdbb9e56e838605532e6f824
+  frozen_on: 2026-09-01
+
+execution:
+  agent_count_target: 1
+  max_concurrency: 1
+  task_scope: isolated-repository-branch
+  production_access: false
+  external_write_access: false
+  network_access: >-
+    Restricted by default. GitHub API and Git network requests require explicit
+    per-command user approval; no other network access is assumed available.
+  runner: Codex desktop local session
+  runner_version: Codex CLI 0.147.0 (desktop-hosted runner)
+  model_provider: OpenAI
+  model_id: not-exposed-by-current-runner
+  model_version_or_snapshot: not-exposed-by-current-runner
+  reasoning_or_effort_setting: not-exposed-by-current-runner
+  toolset_manifest: >-
+    zsh shell; Codex CLI 0.147.0; Python 3.14.7; Git 2.50.1 (Apple Git-155);
+    GitHub CLI 2.97.0; filesystem sandbox with workspace-write access; GitHub
+    and other network actions restricted and approval-gated.
+  prompt_or_instruction_version: >-
+    GitHub Issue #7 owner execution directive (2026-08-30),
+    execution-handoff-phase0b.md, and runbook-e1c1-v0.1.md, read on
+    2026-09-01.
+
+control:
+  architecture: full-gate
+  rule: >-
+    Every branch-local write or command that can change the task workspace is
+    recorded as control-requiring for the pilot. Read/search actions may be
+    logged but do not require approval unless the runner itself requires it.
+  low_risk_route: human
+  medium_risk_route: human
+  high_risk_route: human
+  automated_verifier: false
+  sampled_human_review: false
+  human_gate_required_for:
+    - tracked-file-write
+    - test-or-command-execution-with-side-effects
+    - commit
+  reviewer_count: 1
+  reviewer_identity_storage: hashed-role-only
+  reviewer_protocol: validation/pilot/ground-truth-and-review-protocol.md
+
+reversibility:
+  supported: true
+  mechanism:
+    - isolated-git-branch
+    - pre-task-clean-baseline
+    - recorded-before-after-diff
+    - branch-reset-or-revert
+  external_irreversible_actions: prohibited
+
+telemetry:
+  schema: validation/telemetry-schema.md
+  format: jsonl
+  raw_prompt_storage: prohibited
+  raw_response_storage: prohibited
+  secret_storage: prohibited
+  pii_storage: prohibited
+  output_storage: hash-or-repository-reference
+  required_linkage:
+    - execution-action
+    - control-action
+    - outcome-action
+
+pilot:
+  planned_task_count: 5
+  task_set: validation/pilot/task-set-v0.1.json
+  empirical_status: not-run
+  minimum_traceability: 0.95
+
+freeze_rule: >-
+  This manifest is immutable for the five-task pilot. If any environment or
+  control field changes, create a new architecture ID and restart the
+  affected task set.
